@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/api/book", "destination": "/api/book.js" }
+  ]
+}
