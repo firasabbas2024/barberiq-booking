@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Your Appointment</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand: #1a1a1a;
+      --brand-light: #2e2e2e;
+      --brand-rgb: 26, 26, 26;
+      --bg: #f7f5f2;
+      --surface: #ffffff;
+      --text: #1a1a1a;
+      --text-muted: #7a7774;
+      --border: #e2dedd;
+      --radius: 12px;
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    /* Noise texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* Left panel */
+    .left-panel {
+      background: var(--brand);
+      color: #fff;
+      padding: 60px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .left-panel::after {
+      content: '';
+      position: absolute;
+      bottom: -120px;
+      left: -80px;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      pointer-events: none;
+    }
+
+    .shop-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 100px;
+      padding: 6px 14px 6px 8px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      width: fit-content;
+      margin-bottom: 40px;
+    }
+
+    .shop-badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 8px #4ade80;
+    }
+
+    .left-heading {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 4vw, 52px);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: #fff;
+    }
+
+    .left-heading span {
+      color: rgba(255,255,255,0.35);
+    }
+
+    .left-sub {
+      font-size: 15px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 16px;
+      line-height: 1.6;
+      max-width: 280px;
+    }
+
+    .left-footer {
+      font-size: 12px;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.04em;
+    }
+
+    .scissors-deco {
+      font-size: 80px;
+      line-height: 1;
+      opacity: 0.08;
+      font-family: serif;
+      position: absolute;
+      bottom: 80px;
+      right: 40px;
+      transform: rotate(-30deg);
+      user-select: none;
+    }
+
+    /* Right panel */
+    .right-panel {
+      padding: 60px 48px;
+      overflow-y: auto;
+    }
+
+    .form-header {
+      margin-bottom: 36px;
+    }
+
+    .form-label-main {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .form-title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    input, select {
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--text);
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 13px 16px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7774' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 40px;
+      cursor: pointer;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(var(--brand-rgb), 0.08);
+    }
+
+    input::placeholder { color: #bbb; }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      opacity: 0.4;
+      cursor: pointer;
+    }
+
+    /* Channel toggle */
+    .channel-toggle {
+      display: flex;
+      background: #f0eeeb;
+      border-radius: 10px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .channel-toggle input[type="radio"] { display: none; }
+
+    .channel-toggle label {
+      flex: 1;
+      text-align: center;
+      padding: 10px 0;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      text-transform: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .channel-toggle input:checked + label {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .section-divider {
+      grid-column: 1 / -1;
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 4px 0;
+    }
+
+    .section-label {
+      grid-column: 1 / -1;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .time-hint {
+      grid-column: 1 / -1;
+      font-size: 12px;
+      color: var(--text-muted);
+      background: #f0eeeb;
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .time-hint-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .submit-btn {
+      grid-column: 1 / -1;
+      margin-top: 8px;
+      background: var(--brand);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 16px 24px;
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .submit-btn:hover { opacity: 0.88; }
+    .submit-btn:active { transform: scale(0.99); }
+    .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    .submit-arrow {
+      width: 18px;
+      height: 18px;
+      transition: transform 0.15s;
+    }
+
+    .submit-btn:not(:disabled):hover .submit-arrow {
+      transform: translateX(3px);
+    }
+
+    /* Error message */
+    .error-msg {
+      grid-column: 1 / -1;
+      background: #fff3f3;
+      border: 1.5px solid #fcd5d5;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #b91c1c;
+      display: none;
+    }
+
+    .error-msg.visible { display: block; }
+
+    /* Confirmation screen */
+    .confirmation {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 0;
+      gap: 16px;
+      animation: fadeUp 0.4s ease;
+    }
+
+    .confirmation.visible { display: flex; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .check-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--brand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .confirm-heading {
+      font-family: var(--font-display);
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .confirm-summary {
+      background: #f0eeeb;
+      border-radius: var(--radius);
+      padding: 20px 28px;
+      width: 100%;
+      max-width: 360px;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .confirm-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+
+    .confirm-row span:first-child { color: var(--text-muted); }
+    .confirm-row span:last-child { font-weight: 500; }
+
+    .confirm-sms {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .confirm-reschedule {
+      font-size: 12px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+      margin-top: 4px;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .page-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .left-panel {
+        position: static;
+        height: auto;
+        padding: 36px 24px;
+        min-height: unset;
+      }
+
+      .left-heading { font-size: 32px; }
+      .scissors-deco { display: none; }
+
+      .right-panel { padding: 36px 24px; }
+
+      .form-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: 1; }
+      .submit-btn { grid-column: 1; }
+      .error-msg { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <div>
+      <div class="shop-badge">
+        <div class="shop-badge-dot"></div>
+        <span id="shop-name-badge">BarberIQ</span>
+      </div>
+      <h1 class="left-heading">
+        Book your<br>
+        <span>next</span><br>
+        cut.
+      </h1>
+      <p class="left-sub">Select your barber, pick a time that works, and we'll take care of the rest.</p>
+    </div>
+    <div class="left-footer">Powered by BarberIQ</div>
+    <div class="scissors-deco">✂</div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+
+    <div class="form-header">
+      <div class="form-label-main">New appointment</div>
+      <div class="form-title">Your details</div>
+    </div>
+
+    <!-- FORM -->
+    <form id="booking-form">
+      <div class="form-grid">
+
+        <!-- Personal info -->
+        <div class="field">
+          <label for="first_name">First name</label>
+          <input type="text" id="first_name" name="first_name" placeholder="Marcus" required minlength="1" autocomplete="given-name">
+        </div>
+
+        <div class="field">
+          <label for="last_name">Last name</label>
+          <input type="text" id="last_name" name="last_name" placeholder="Johnson" required minlength="1" autocomplete="family-name">
+        </div>
+
+        <div class="field full">
+          <label for="phone">Phone number</label>
+          <input type="tel" id="phone" name="phone" placeholder="+1 555 123 4567" required autocomplete="tel">
+        </div>
+
+        <hr class="section-divider">
+        <div class="section-label">Your appointment</div>
+
+        <!-- Barber -->
+        <div class="field full">
+          <label for="preferred_barber">Preferred barber</label>
+          <select id="preferred_barber" name="preferred_barber" required>
+            <option value="" disabled selected>Select a barber</option>
+            <option value="Jay">Jay</option>
+            <option value="Marcus">Marcus</option>
+            <option value="Devon">Devon</option>
+          </select>
+        </div>
+
+        <!-- Service -->
+        <div class="field full">
+          <label for="service">Service</label>
+          <select id="service" name="service" required>
+            <option value="" disabled selected>Select a service</option>
+            <option value="Haircut">Haircut</option>
+            <option value="Fade">Fade</option>
+            <option value="Beard Trim">Beard Trim</option>
+            <option value="Haircut + Beard">Haircut + Beard</option>
+          </select>
+        </div>
+
+        <!-- Date -->
+        <div class="field">
+          <label for="date">Date</label>
+          <input type="date" id="date" name="date" required>
+        </div>
+
+        <!-- Time -->
+        <div class="field">
+          <label for="time">Time</label>
+          <select id="time" name="time" required disabled>
+            <option value="" disabled selected>Pick a date first</option>
+          </select>
+        </div>
+
+        <!-- Time hint -->
+        <div class="time-hint" id="time-hint">
+          <div class="time-hint-dot"></div>
+          <span>Select a barber and date to see available times</span>
+        </div>
+
+        <hr class="section-divider">
+        <div class="section-label">Contact preference</div>
+
+        <!-- Channel toggle -->
+        <div class="field full">
+          <div class="channel-toggle">
+            <input type="radio" id="ch-sms" name="preferred_channel" value="sms" checked>
+            <label for="ch-sms">SMS</label>
+            <input type="radio" id="ch-whatsapp" name="preferred_channel" value="whatsapp">
+            <label for="ch-whatsapp">WhatsApp</label>
+          </div>
+        </div>
+
+        <!-- Error message -->
+        <div class="error-msg" id="error-msg"></div>
+
+        <!-- Submit -->
+        <button type="submit" class="submit-btn" id="submit-btn">
+          Confirm booking
+          <svg class="submit-arrow" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 9h12M10 4l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+      </div>
+    </form>
+
+    <!-- CONFIRMATION SCREEN -->
+    <div class="confirmation" id="confirmation">
+      <div class="check-circle">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <path d="M6 14l6 6 10-12" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="confirm-heading">You're booked!</div>
+      <div class="confirm-summary" id="confirm-summary"></div>
+      <div class="confirm-sms" id="confirm-sms"></div>
+      <div class="confirm-reschedule">Need to reschedule? Call the shop.</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ─── Read URL params ───────────────────────────────────────────
+  const params = new URLSearchParams(window.location.search);
+  const shopId    = params.get('shop') || 'f811b440-7576-401b-b4f7-a81093154ae0';
+  const shopName  = params.get('name') ? decodeURIComponent(params.get('name')) : 'BarberIQ';
+  const brandColor = params.get('color') ? '#' + params.get('color') : '#1a1a1a';
+
+  // Apply branding
+  document.documentElement.style.setProperty('--brand', brandColor);
+  document.getElementById('shop-name-badge').textContent = shopName;
+  document.title = 'Book at ' + shopName;
+
+  // Compute RGB for box-shadow
+  function hexToRgb(hex) {
+    const r = parseInt(hex.slice(1,3),16);
+    const g = parseInt(hex.slice(3,5),16);
+    const b = parseInt(hex.slice(5,7),16);
+    return `${r}, ${g}, ${b}`;
+  }
+  document.documentElement.style.setProperty('--brand-rgb', hexToRgb(brandColor));
+
+  // ─── Date field — min today, max +60 days ─────────────────────
+  const dateInput = document.getElementById('date');
+  const today = new Date();
+  const maxDate = new Date(today);
+  maxDate.setDate(today.getDate() + 60);
+  dateInput.min = today.toISOString().split('T')[0];
+  dateInput.max = maxDate.toISOString().split('T')[0];
+
+  // ─── Google Calendar config ────────────────────────────────────
+  const GCAL_API_KEY   = 'AIzaSyBfSQuP-9QSGyOLuUErebp-uXjr-o4Y-3o';
+  const GCAL_ID        = 'f7767e8626e70bcbc0f9b1d958d42f1411bd5780167196bb7f2d68b5bef61827@group.calendar.google.com';
+
+  const timeSelect = document.getElementById('time');
+  const timeHint   = document.getElementById('time-hint');
+
+  // Generate every 30-min slot from 9:00 AM to 7:00 PM
+  function generateAllSlots() {
+    const slots = [];
+    for (let h = 9; h <= 19; h++) {
+      ['00', '30'].forEach(m => {
+        if (h === 19 && m === '30') return;
+        const period = h < 12 ? 'AM' : 'PM';
+        const hour12 = h > 12 ? h - 12 : h === 0 ? 12 : h;
+        slots.push(`${hour12}:${m} ${period}`);
+      });
+    }
+    return slots;
+  }
+
+  // Convert "2:30 PM" + "YYYY-MM-DD" into a Date object
+  function slotToDate(dateStr, slotStr) {
+    const [y, mo, d] = dateStr.split('-').map(Number);
+    const [time, period] = slotStr.split(' ');
+    let [h, m] = time.split(':').map(Number);
+    if (period === 'PM' && h !== 12) h += 12;
+    if (period === 'AM' && h === 12) h = 0;
+    return new Date(y, mo - 1, d, h, m, 0);
+  }
+
+  // Check if a slot overlaps with any busy period
+  function isSlotBusy(dateStr, slotStr, busyPeriods) {
+    const slotStart = slotToDate(dateStr, slotStr);
+    const slotEnd   = new Date(slotStart.getTime() + 30 * 60 * 1000);
+    return busyPeriods.some(({ start, end }) => {
+      const busyStart = new Date(start);
+      const busyEnd   = new Date(end);
+      return slotStart < busyEnd && slotEnd > busyStart;
+    });
+  }
+
+  function populateTimeSlots(slots) {
+    timeSelect.innerHTML = '';
+    if (slots.length === 0) {
+      timeSelect.innerHTML = '<option value="" disabled selected>No slots available</option>';
+      timeHint.innerHTML = '<div class="time-hint-dot"></div><span>No available times for this date. Try another day.</span>';
+      timeSelect.disabled = true;
+      return;
+    }
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    placeholder.textContent = 'Select a time';
+    timeSelect.appendChild(placeholder);
+    slots.forEach(slot => {
+      const opt = document.createElement('option');
+      opt.value = slot;
+      opt.textContent = slot;
+      timeSelect.appendChild(opt);
+    });
+    timeSelect.disabled = false;
+    timeHint.innerHTML = '<div class="time-hint-dot" style="background:#4ade80"></div><span>' + slots.length + ' slots available</span>';
+  }
+
+  // Call Google Calendar freebusy API and return available slots
+  async function fetchAvailableSlots(dateStr) {
+    const [y, mo, d] = dateStr.split('-').map(Number);
+    const timeMin = new Date(y, mo - 1, d, 0, 0, 0).toISOString();
+    const timeMax = new Date(y, mo - 1, d, 23, 59, 59).toISOString();
+
+    const url = `https://www.googleapis.com/calendar/v3/freeBusy?key=${GCAL_API_KEY}`;
+    const body = {
+      timeMin,
+      timeMax,
+      items: [{ id: GCAL_ID }]
+    };
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if (!res.ok) throw new Error('Calendar API error: ' + res.status);
+
+    const data = await res.json();
+    const busyPeriods = data.calendars?.[GCAL_ID]?.busy || [];
+
+    const allSlots = generateAllSlots();
+    return allSlots.filter(slot => !isSlotBusy(dateStr, slot, busyPeriods));
+  }
+
+  // When barber + date are both selected, fetch real availability
+  async function checkAndLoadSlots() {
+    const barber = document.getElementById('preferred_barber').value;
+    const date   = dateInput.value;
+    if (!barber || !date) return;
+
+    timeSelect.disabled = true;
+    timeSelect.innerHTML = '<option value="" disabled selected>Checking availability…</option>';
+    timeHint.innerHTML = '<div class="time-hint-dot"></div><span>Checking Google Calendar…</span>';
+
+    try {
+      const availableSlots = await fetchAvailableSlots(date);
+      populateTimeSlots(availableSlots);
+    } catch (err) {
+      console.error(err);
+      timeSelect.innerHTML = '<option value="" disabled selected>Could not load times</option>';
+      timeHint.innerHTML = '<div class="time-hint-dot"></div><span>Could not load availability. Please try again.</span>';
+      timeSelect.disabled = true;
+    }
+  }
+
+  document.getElementById('preferred_barber').addEventListener('change', checkAndLoadSlots);
+  dateInput.addEventListener('change', checkAndLoadSlots);
+
+  // ─── Form submission ───────────────────────────────────────────
+  const N8N_WEBHOOK = 'https://firasabbas.app.n8n.cloud/webhook-test/book';
+
+  const SUBMIT_BTN_HTML = 'Confirm booking <svg class="submit-arrow" viewBox="0 0 18 18" fill="none"><path d="M3 9h12M10 4l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  document.getElementById('booking-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const errorEl  = document.getElementById('error-msg');
+    const submitBtn = document.getElementById('submit-btn');
+    errorEl.classList.remove('visible');
+
+    // Build payload with exact field names from spec
+    const payload = {
+      shop_id:           shopId,
+      first_name:        document.getElementById('first_name').value.trim(),
+      last_name:         document.getElementById('last_name').value.trim(),
+      phone:             document.getElementById('phone').value.trim(),
+      preferred_barber:  document.getElementById('preferred_barber').value,
+      date:              dateInput.value,
+      time:              timeSelect.value,
+      service:           document.getElementById('service').value,
+      preferred_channel: document.querySelector('input[name="preferred_channel"]:checked').value,
+    };
+
+    // Basic phone validation — must start with +
+    if (!payload.phone.startsWith('+')) {
+      errorEl.textContent = 'Please include your country code, e.g. +1 555 123 4567';
+      errorEl.classList.add('visible');
+      return;
+    }
+
+    // Disable button during request
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Booking…';
+
+    try {
+      const res = await fetch(N8N_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.status === 400) {
+        errorEl.textContent = 'Something went wrong. Please check your details and try again.';
+        errorEl.classList.add('visible');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = SUBMIT_BTN_HTML;
+        return;
+      }
+
+      if (res.status === 500) {
+        errorEl.textContent = 'Something went wrong on our end. Please try again in a moment.';
+        errorEl.classList.add('visible');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = SUBMIT_BTN_HTML;
+        return;
+      }
+
+      if (res.ok) {
+        showConfirmation(payload);
+        return;
+      }
+
+    } catch (err) {
+      errorEl.textContent = 'Could not connect. Please check your connection and try again.';
+      errorEl.classList.add('visible');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = SUBMIT_BTN_HTML;
+    }
+  });
+
+  // ─── Confirmation screen ───────────────────────────────────────
+  function showConfirmation(payload) {
+    document.getElementById('booking-form').style.display = 'none';
+    document.querySelector('.form-header').style.display = 'none';
+
+    const summary = document.getElementById('confirm-summary');
+    summary.innerHTML = `
+      <div class="confirm-row"><span>Barber</span><span>${payload.preferred_barber}</span></div>
+      <div class="confirm-row"><span>Date</span><span>${formatDate(payload.date)}</span></div>
+      <div class="confirm-row"><span>Time</span><span>${payload.time}</span></div>
+      <div class="confirm-row"><span>Service</span><span>${payload.service}</span></div>
+    `;
+
+    document.getElementById('confirm-sms').textContent =
+      `We'll send a confirmation to ${payload.phone}`;
+
+    document.getElementById('confirmation').classList.add('visible');
+  }
+
+  function formatDate(dateStr) {
+    const [y, m, d] = dateStr.split('-');
+    const date = new Date(y, m - 1, d);
+    return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  }
+</script>
+</body>
+</html>
