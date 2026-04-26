@@ -724,7 +724,7 @@
   dateInput.addEventListener('change', checkAndLoadSlots);
 
   // ─── Form submission ───────────────────────────────────────────
-  const N8N_WEBHOOK = 'https://firasabbas.app.n8n.cloud/webhook-test/book';
+  const N8N_WEBHOOK = '/api/book';
 
   const SUBMIT_BTN_HTML = 'Confirm booking <svg class="submit-arrow" viewBox="0 0 18 18" fill="none"><path d="M3 9h12M10 4l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
@@ -745,7 +745,7 @@
       date:              dateInput.value,
       time:              timeSelect.value,
       service:           document.getElementById('service').value,
-      preferred_channel: document.querySelector('input[name="preferred_channel"]:checked').value,
+      preferred_channel: document.querySelector('input[name="preferred_channel"]:checked').value.trim().toLowerCase(),
     };
 
     // Basic phone validation — must start with +
