@@ -604,19 +604,14 @@
 
   // ─── Config ────────────────────────────────────────────────────
   const GCAL_API_KEY    = 'AIzaSyBhSFufzwI_Wue9BB_0Fc7bUolsrjyGAQo';
-  const SUPABASE_URL    = 'https://rlrufmpknxbvhgjtnqpp.supabase.co';
-  const SUPABASE_ANON   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscnVmbXBrbnhidmhnanRucXBwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjU1NzEsImV4cCI6MjA5MjIwMTU3MX0.GXGHYQTYh7jUtSv6gHbTPmJuaZNu61wv77fZEXvxnSg';
 
-  // Barber calendar IDs — fetched from Supabase
+  // Barber calendar IDs — fetched from Supabase via proxy
   let barberCalendars = {}; // { "Ibrahim": "calendar_id", ... }
 
-  // ─── Fetch barbers from Supabase ───────────────────────────────
+  // ─── Fetch barbers via proxy ───────────────────────────────────
   async function loadBarbers() {
     try {
-      const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/barbers?shop_id=eq.${shopId}&active=eq.true&select=name,calendar_id`,
-        { headers: { 'apikey': SUPABASE_ANON, 'Authorization': `Bearer ${SUPABASE_ANON}` } }
-      );
+      const res = await fetch(`/api/book?shop_id=${shopId}`);
       const barbers = await res.json();
       const select = document.getElementById('preferred_barber');
       select.innerHTML = '<option value="" disabled selected>Select a barber</option>';
