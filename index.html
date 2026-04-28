@@ -495,9 +495,6 @@
           <label for="preferred_barber">Preferred barber</label>
           <select id="preferred_barber" name="preferred_barber" required>
             <option value="" disabled selected>Select a barber</option>
-            <option value="Jay">Jay</option>
-            <option value="Marcus">Marcus</option>
-            <option value="Devon">Devon</option>
           </select>
         </div>
 
@@ -605,9 +602,37 @@
   dateInput.min = today.toISOString().split('T')[0];
   dateInput.max = maxDate.toISOString().split('T')[0];
 
-  // ─── Google Calendar config ────────────────────────────────────
-  const GCAL_API_KEY   = 'AIzaSyBfSQuP-9QSGyOLuUErebp-uXjr-o4Y-3o';
-  const GCAL_ID        = 'f7767e8626e70bcbc0f9b1d958d42f1411bd5780167196bb7f2d68b5bef61827@group.calendar.google.com';
+  // ─── Config ────────────────────────────────────────────────────
+  const GCAL_API_KEY    = 'AIzaSyBhSFufzwI_Wue9BB_0Fc7bUolsrjyGAQo';
+  const SUPABASE_URL    = 'https://rlrufmpknxbvhgjtnqpp.supabase.co';
+  const SUPABASE_ANON   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscnVmbXBrbnhidmhnanRucXBwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjU1NzEsImV4cCI6MjA5MjIwMTU3MX0.GXGHYQTYh7jUtSv6gHbTPmJuaZNu61wv77fZEXvxnSg';
+
+  // Barber calendar IDs — fetched from Supabase
+  let barberCalendars = {}; // { "Ibrahim": "calendar_id", ... }
+
+  // ─── Fetch barbers from Supabase ───────────────────────────────
+  async function loadBarbers() {
+    try {
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/barbers?shop_id=eq.${shopId}&active=eq.true&select=name,calendar_id`,
+        { headers: { 'apikey': SUPABASE_ANON, 'Authorization': `Bearer ${SUPABASE_ANON}` } }
+      );
+      const barbers = await res.json();
+      const select = document.getElementById('preferred_barber');
+      select.innerHTML = '<option value="" disabled selected>Select a barber</option>';
+      barbers.forEach(b => {
+        barberCalendars[b.name] = b.calendar_id;
+        const opt = document.createElement('option');
+        opt.value = b.name;
+        opt.textContent = b.name;
+        select.appendChild(opt);
+      });
+    } catch (err) {
+      console.error('Failed to load barbers:', err);
+    }
+  }
+
+  loadBarbers();
 
   const timeSelect = document.getElementById('time');
   const timeHint   = document.getElementById('time-hint');
@@ -672,7 +697,7 @@
   }
 
   // Call Google Calendar freebusy API and return available slots
-  async function fetchAvailableSlots(dateStr) {
+  async function fetchAvailableSlots(dateStr, calendarId) {
     const [y, mo, d] = dateStr.split('-').map(Number);
     const timeMin = new Date(y, mo - 1, d, 0, 0, 0).toISOString();
     const timeMax = new Date(y, mo - 1, d, 23, 59, 59).toISOString();
@@ -681,7 +706,7 @@
     const body = {
       timeMin,
       timeMax,
-      items: [{ id: GCAL_ID }]
+      items: [{ id: calendarId }]
     };
 
     const res = await fetch(url, {
@@ -693,7 +718,7 @@
     if (!res.ok) throw new Error('Calendar API error: ' + res.status);
 
     const data = await res.json();
-    const busyPeriods = data.calendars?.[GCAL_ID]?.busy || [];
+    const busyPeriods = data.calendars?.[calendarId]?.busy || [];
 
     const allSlots = generateAllSlots();
     return allSlots.filter(slot => !isSlotBusy(dateStr, slot, busyPeriods));
@@ -705,12 +730,18 @@
     const date   = dateInput.value;
     if (!barber || !date) return;
 
+    const calendarId = barberCalendars[barber];
+    if (!calendarId) {
+      timeHint.innerHTML = '<div class="time-hint-dot"></div><span>No calendar found for this barber.</span>';
+      return;
+    }
+
     timeSelect.disabled = true;
     timeSelect.innerHTML = '<option value="" disabled selected>Checking availability…</option>';
     timeHint.innerHTML = '<div class="time-hint-dot"></div><span>Checking Google Calendar…</span>';
 
     try {
-      const availableSlots = await fetchAvailableSlots(date);
+      const availableSlots = await fetchAvailableSlots(date, calendarId);
       populateTimeSlots(availableSlots);
     } catch (err) {
       console.error(err);
