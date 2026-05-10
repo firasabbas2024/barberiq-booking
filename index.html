@@ -510,13 +510,15 @@
         </div>
 
         <div class="field full">
-          <div style="background:#f0eeeb; border-radius:10px; padding:14px 16px; display:flex; align-items:flex-start; gap:12px;">
-            <input type="checkbox" id="sms_consent" name="sms_consent" required
-              style="width:18px; height:18px; flex-shrink:0; margin-top:2px; accent-color:var(--brand); cursor:pointer;">
-            <label for="sms_consent" style="font-size:12px; color:var(--text-muted); cursor:pointer; text-transform:none; letter-spacing:0; font-weight:400; line-height:1.5;">
-              By booking, I agree to receive appointment confirmations and reminders via the selected channel. Msg &amp; data rates may apply. Reply STOP to opt out.
-            </label>
+          <div style="background:#f0eeeb; border-radius:10px; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:16px; cursor:pointer;" onclick="toggleConsent()">
+            <span style="font-size:12px; color:var(--text-muted); line-height:1.5; flex:1;">
+              I agree to receive appointment confirmations and reminders. Msg &amp; data rates may apply. Reply STOP to opt out.
+            </span>
+            <div id="consent-toggle" style="flex-shrink:0; width:44px; height:26px; border-radius:100px; background:#ccc; position:relative; transition:background 0.2s; cursor:pointer;">
+              <div id="consent-knob" style="position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,0.2); transition:transform 0.2s;"></div>
+            </div>
           </div>
+          <input type="checkbox" id="sms_consent" name="sms_consent" required style="display:none;">
         </div>
 
         <div class="error-msg" id="error-msg"></div>
@@ -547,6 +549,18 @@
 </div>
 
 <script>
+  // Consent toggle
+  let consentChecked = false;
+  function toggleConsent() {
+    consentChecked = !consentChecked;
+    const toggle = document.getElementById('consent-toggle');
+    const knob = document.getElementById('consent-knob');
+    const checkbox = document.getElementById('sms_consent');
+    toggle.style.background = consentChecked ? 'var(--brand)' : '#ccc';
+    knob.style.transform = consentChecked ? 'translateX(18px)' : 'translateX(0)';
+    checkbox.checked = consentChecked;
+  }
+
   const params = new URLSearchParams(window.location.search);
   const shopId     = params.get('shop') || 'bf10ffa1-12dd-4f3b-ae4e-eb122ee66654';
   const shopName   = params.get('name') ? decodeURIComponent(params.get('name')) : 'BarberIQ';
