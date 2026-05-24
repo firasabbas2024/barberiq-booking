@@ -407,35 +407,22 @@
     .services-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
-      background: var(--border);
+      gap: 16px;
     }
 
     .service-card {
       background: var(--dark);
+      border: 1px solid var(--border);
+      border-radius: 8px;
       padding: 36px 32px;
       position: relative;
       overflow: hidden;
-      transition: background 0.25s;
+      transition: border-color 0.25s, transform 0.25s;
     }
 
-    .service-card::after {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 3px;
-      background: var(--blue);
-      transform: scaleY(0);
-      transition: transform 0.25s;
-      transform-origin: bottom;
-    }
-
-    .service-card:hover { background: var(--dark2); }
-    .service-card:hover::after { transform: scaleY(1); }
-
-    .service-icon {
-      font-size: 28px;
-      margin-bottom: 16px;
+    .service-card:hover {
+      border-color: var(--blue);
+      transform: translateY(-3px);
     }
 
     .service-name {
@@ -452,11 +439,13 @@
       font-size: 13px;
       color: var(--grey);
       margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
     }
 
     .service-price {
       font-family: var(--font-display);
-      font-size: 42px;
+      font-size: 48px;
       font-weight: 800;
       color: var(--blue-bright);
       letter-spacing: 0.01em;
@@ -464,7 +453,7 @@
     }
 
     .service-price sup {
-      font-size: 22px;
+      font-size: 24px;
       vertical-align: super;
     }
 
@@ -1049,6 +1038,86 @@
       footer { flex-direction: column; text-align: center; padding: 40px 20px; }
       .footer-info { text-align: center; }
     }
+
+    /* Barber picker */
+    .barber-picker {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .barber-option {
+      flex: 1;
+      min-width: 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 10px;
+      border: 2px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      background: rgba(255,255,255,0.03);
+      user-select: none;
+    }
+
+    .barber-option:hover {
+      border-color: var(--blue);
+      background: rgba(41,121,255,0.06);
+    }
+
+    .barber-option.selected {
+      border-color: var(--blue-bright);
+      background: rgba(41,121,255,0.12);
+    }
+
+    .barber-option img {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: top;
+      border: 2px solid rgba(255,255,255,0.1);
+      transition: border-color 0.2s;
+    }
+
+    .barber-option.selected img {
+      border-color: var(--blue-bright);
+    }
+
+    .barber-option-initial {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--blue-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 800;
+      color: white;
+      border: 2px solid rgba(255,255,255,0.1);
+    }
+
+    .barber-option.selected .barber-option-initial {
+      border-color: var(--blue-bright);
+    }
+
+    .barber-option-name {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+
+    @media (max-width: 768px) {
+      .barber-picker { gap: 8px; }
+      .barber-option { padding: 10px 8px; min-width: 80px; }
+      .barber-option img, .barber-option-initial { width: 56px; height: 56px; }
+    }
   </style>
 </head>
 <body>
@@ -1056,15 +1125,10 @@
 <!-- NAV -->
 <nav>
   <a href="#" class="nav-logo">
-    <div class="nav-logo-icon">NJ</div>
-    <div class="nav-logo-text">
-      New Jersey
-      <span>Barbershop</span>
-    </div>
+    <img src="/logo.png" alt="New Jersey Barbershop" style="height:52px; width:auto; object-fit:contain; filter:brightness(1.05);">
   </a>
   <ul class="nav-links">
     <li><a href="#services">Services</a></li>
-    <li><a href="#team">Team</a></li>
     <li><a href="#reviews">Reviews</a></li>
     <li><a href="#book" class="nav-book">Book Now</a></li>
   </ul>
@@ -1080,7 +1144,7 @@
   <div class="hero-content">
     <div class="hero-badge">
       <div class="hero-badge-dot"></div>
-      Now accepting bookings · Clifton, NJ
+      Now accepting online bookings · Clifton, NJ
     </div>
     <h1 class="hero-title">
       New<br>
@@ -1191,49 +1255,6 @@
         <div class="service-price"><sup>$</sup>30</div>
       </div>
     </div>
-    <!-- Kids highlight -->
-    <div class="kids-banner">
-      <div class="kids-icon">🚗</div>
-      <div class="kids-text">
-        <h3>Kids Love the Car Chair!</h3>
-        <p>We have a special car-shaped chair that makes haircuts fun for little ones. No more tears — just smiles and a fresh cut. Perfect for ages 10–13.</p>
-      </div>
-      <div class="kids-price">$30</div>
-    </div>
-  </div>
-</div>
-
-<!-- TEAM -->
-<div id="team" style="background: var(--dark); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-  <div class="section">
-    <div class="section-eyebrow">Meet the crew</div>
-    <div class="section-title">Your<br>Barbers</div>
-    <div class="team-grid">
-      <div class="team-card">
-        <img src="/jay.jpg" alt="Jay" class="team-photo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-        <div class="team-photo-placeholder" style="display:none;">J</div>
-        <div class="team-info">
-          <div class="team-name">Jay</div>
-          <div class="team-role">Senior Barber · Fades & Beards</div>
-        </div>
-      </div>
-      <div class="team-card">
-        <img src="/abe.jpg" alt="Abe" class="team-photo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-        <div class="team-photo-placeholder" style="display:none;">A</div>
-        <div class="team-info">
-          <div class="team-name">Abe</div>
-          <div class="team-role">Senior Barber · All styles</div>
-        </div>
-      </div>
-      <div class="team-card">
-        <img src="/sheika.jpg" alt="Sheika" class="team-photo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-        <div class="team-photo-placeholder" style="display:none;">S</div>
-        <div class="team-info">
-          <div class="team-name">Sheika</div>
-          <div class="team-role">Barber · Precision cuts</div>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -1319,10 +1340,11 @@
           <div class="form-section-label">Your appointment</div>
 
           <div class="field full">
-            <label for="preferred_barber">Preferred barber</label>
-            <select id="preferred_barber" name="preferred_barber" required>
-              <option value="" disabled selected>Select a barber</option>
-            </select>
+            <label>Choose your barber</label>
+            <div class="barber-picker" id="barber-picker">
+              <!-- Populated dynamically -->
+            </div>
+            <input type="hidden" id="preferred_barber" name="preferred_barber" required>
           </div>
 
           <div class="field full">
@@ -1403,7 +1425,7 @@
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-logo">New <span>Jersey</span> Barbershop</div>
+  <img src="/logo.png" alt="New Jersey Barbershop" style="height:44px; width:auto; object-fit:contain; opacity:0.9;">
   <div class="footer-info">
     1352 Clifton Ave, Clifton, NJ 07012<br>
     <a href="https://maps.google.com/?q=1352+Clifton+Ave+Clifton+NJ+07012" target="_blank">Get directions →</a>
@@ -1444,19 +1466,51 @@
   dateInput.min = today.toISOString().split('T')[0];
   dateInput.max = maxDate.toISOString().split('T')[0];
 
-  // Load barbers
+  // Barber photo map
+  const barberPhotos = {
+    'Jay': '/jay.jpg',
+    'Ibrahim': '/abe.jpg',
+    'Hussein': '/sheika.jpg',
+  };
+
+  // Load barbers as photo picker
   async function loadBarbers() {
     try {
       const res = await fetch(`/api/book?shop_id=${shopId}`);
       const barbers = await res.json();
-      const select = document.getElementById('preferred_barber');
-      select.innerHTML = '<option value="" disabled selected>Select a barber</option>';
+      const picker = document.getElementById('barber-picker');
+      const hiddenInput = document.getElementById('preferred_barber');
+      picker.innerHTML = '';
+
       barbers.forEach(b => {
         barberCalendars[b.name] = b.calendar_id;
-        const opt = document.createElement('option');
-        opt.value = b.name;
-        opt.textContent = b.name;
-        select.appendChild(opt);
+
+        const photoUrl = barberPhotos[b.name];
+        const card = document.createElement('div');
+        card.className = 'barber-option';
+        card.dataset.name = b.name;
+
+        if (photoUrl) {
+          card.innerHTML = `
+            <img src="${photoUrl}" alt="${b.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+            <div class="barber-option-initial" style="display:none;">${b.name.charAt(0)}</div>
+            <div class="barber-option-name">${b.name}</div>
+          `;
+        } else {
+          card.innerHTML = `
+            <div class="barber-option-initial">${b.name.charAt(0)}</div>
+            <div class="barber-option-name">${b.name}</div>
+          `;
+        }
+
+        card.addEventListener('click', () => {
+          document.querySelectorAll('.barber-option').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          hiddenInput.value = b.name;
+          checkAndLoadSlots();
+        });
+
+        picker.appendChild(card);
       });
     } catch (err) { console.error('Failed to load barbers:', err); }
   }
