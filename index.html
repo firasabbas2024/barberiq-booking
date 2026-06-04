@@ -1673,7 +1673,7 @@
       <div class="confirm-row"><span>Time</span><span>${payload.time}</span></div>
       <div class="confirm-row"><span>Service</span><span>${payload.service}</span></div>
     `;
-    document.getElementById('confirm-sms').textContent = `We'll send a confirmation to ${payload.phone}. Please allow a 15-minute grace period upon arrival.`;
+    document.getElementById('confirm-sms').textContent = `We'll send a confirmation to ${payload.phone}`;
     document.getElementById('confirmation').classList.add('visible');
   }
 
