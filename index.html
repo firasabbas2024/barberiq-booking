@@ -1417,7 +1417,8 @@
         <div class="confirm-heading">You're Booked!</div>
         <div class="confirm-summary" id="confirm-summary"></div>
         <div class="confirm-sms" id="confirm-sms"></div>
-        <div class="confirm-note">Need to reschedule? Call the shop.</div>
+        <div class="confirm-note">Please allow a 15-minute grace period from your appointment time — we want to make sure you get the best service!</div>
+        <div class="confirm-note" style="margin-top:8px;">Need to reschedule? Call the shop.</div>
       </div>
     </div>
   </div>
@@ -1471,12 +1472,14 @@
     'Jay': '/jay.jpg',
     'Ibrahim': '/abe.jpg',
     'Hussein': '/sheika.jpg',
+    'Ameer': '/ameer.jpg',
   };
 
   const barberDisplayNames = {
     'Jay': 'Jay',
     'Ibrahim': 'Abe',
     'Hussein': 'Sheika',
+    'Ameer': 'Ameer',
   };
 
   // Load barbers as photo picker
@@ -1670,7 +1673,7 @@
       <div class="confirm-row"><span>Time</span><span>${payload.time}</span></div>
       <div class="confirm-row"><span>Service</span><span>${payload.service}</span></div>
     `;
-    document.getElementById('confirm-sms').textContent = `We'll send a confirmation to ${payload.phone}`;
+    document.getElementById('confirm-sms').textContent = `We'll send a confirmation to ${payload.phone}. Please allow a 15-minute grace period upon arrival.`;
     document.getElementById('confirmation').classList.add('visible');
   }
 
