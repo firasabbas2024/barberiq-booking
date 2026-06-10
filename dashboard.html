@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BarberIQ Dashboard — NJ Barbershop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #1565d8;
+      --blue-bright: #2979ff;
+      --blue-dark: #0d47a1;
+      --blue-glow: rgba(41,121,255,0.18);
+      --black: #0a0a0a;
+      --dark: #111318;
+      --dark2: #1a1e27;
+      --white: #ffffff;
+      --grey: #8a94a6;
+      --border: rgba(255,255,255,0.08);
+      --border-blue: rgba(41,121,255,0.2);
+      --green: #22c55e;
+      --green-bg: rgba(34,197,94,0.1);
+      --yellow: #f59e0b;
+      --yellow-bg: rgba(245,158,11,0.1);
+      --red: #ef4444;
+      --red-bg: rgba(239,68,68,0.1);
+      --font-display: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--black);
+      color: var(--white);
+      min-height: 100vh;
+    }
+
+    /* ── LOGIN SCREEN ─────────────────────────────────────── */
+    #login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--black);
+      padding: 24px;
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 380px;
+      background: var(--dark);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 48px 40px;
+      text-align: center;
+    }
+
+    .login-logo {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--blue-bright);
+      margin-bottom: 8px;
+    }
+
+    .login-title {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 32px;
+    }
+
+    .login-input {
+      width: 100%;
+      font-family: var(--font-body);
+      font-size: 16px;
+      color: var(--white);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 6px;
+      padding: 14px 16px;
+      text-align: center;
+      letter-spacing: 0.15em;
+      outline: none;
+      margin-bottom: 12px;
+      transition: border-color 0.2s;
+    }
+
+    .login-input:focus { border-color: var(--blue-bright); }
+    .login-input::placeholder { letter-spacing: 0.05em; color: rgba(255,255,255,0.2); }
+
+    .login-btn {
+      width: 100%;
+      background: var(--blue);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      padding: 14px;
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .login-btn:hover { background: var(--blue-bright); }
+
+    .login-error {
+      font-size: 13px;
+      color: var(--red);
+      margin-top: 12px;
+      display: none;
+    }
+
+    /* ── DASHBOARD ────────────────────────────────────────── */
+    #dashboard { display: none; }
+
+    /* Top bar */
+    .topbar {
+      background: rgba(10,10,10,0.96);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 64px;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .topbar-logo {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+
+    .topbar-logo span { color: var(--blue-bright); }
+
+    .topbar-shop {
+      font-size: 13px;
+      color: var(--grey);
+      border-left: 1px solid var(--border);
+      padding-left: 16px;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--green);
+    }
+
+    .live-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    .refresh-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--grey);
+      padding: 7px 14px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .refresh-btn:hover { border-color: var(--blue); color: var(--white); }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: var(--grey);
+      font-size: 13px;
+      cursor: pointer;
+      padding: 4px 0;
+    }
+
+    .logout-btn:hover { color: var(--white); }
+
+    /* Main layout */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 32px 64px;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-date {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--blue-bright);
+      margin-bottom: 6px;
+    }
+
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 48px;
+      font-weight: 900;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--blue);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--grey);
+      margin-bottom: 10px;
+    }
+
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 48px;
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1;
+      letter-spacing: 0.01em;
+    }
+
+    .stat-sub {
+      font-size: 12px;
+      color: var(--grey);
+      margin-top: 6px;
+    }
+
+    .stat-value.blue { color: var(--blue-bright); }
+    .stat-value.green { color: var(--green); }
+
+    /* Section headers */
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+
+    .section-count {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--grey);
+      background: rgba(255,255,255,0.05);
+      border-radius: 100px;
+      padding: 4px 12px;
+    }
+
+    /* Today's appointments */
+    .appt-grid {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 40px;
+    }
+
+    .appt-card {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 20px;
+      display: grid;
+      grid-template-columns: 90px 1fr 120px 100px;
+      align-items: center;
+      gap: 16px;
+      transition: border-color 0.2s;
+    }
+
+    .appt-card:hover { border-color: var(--border-blue); }
+
+    .appt-time {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--blue-bright);
+      letter-spacing: 0.02em;
+    }
+
+    .appt-time-period {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--grey);
+      letter-spacing: 0.06em;
+    }
+
+    .appt-client {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 3px;
+    }
+
+    .appt-service {
+      font-size: 13px;
+      color: var(--grey);
+    }
+
+    .appt-barber {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--white);
+    }
+
+    .barber-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .appt-status {
+      text-align: right;
+    }
+
+    .status-pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 100px;
+    }
+
+    .status-booked { background: var(--blue-glow); color: var(--blue-bright); }
+    .status-completed { background: var(--green-bg); color: var(--green); }
+    .status-noshow { background: var(--red-bg); color: var(--red); }
+    .status-cancelled { background: rgba(255,255,255,0.06); color: var(--grey); }
+
+    .empty-state {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 48px;
+      text-align: center;
+      color: var(--grey);
+      font-size: 15px;
+      margin-bottom: 40px;
+    }
+
+    /* Client table */
+    .client-table {
+      background: var(--dark);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 40px;
+    }
+
+    .client-table-head {
+      display: grid;
+      grid-template-columns: 1fr 130px 110px 110px 100px;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .th {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--grey);
+    }
+
+    .client-row {
+      display: grid;
+      grid-template-columns: 1fr 130px 110px 110px 100px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      transition: background 0.15s;
+    }
+
+    .client-row:last-child { border-bottom: none; }
+    .client-row:hover { background: rgba(255,255,255,0.02); }
+
+    .client-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 2px;
+    }
+
+    .client-phone {
+      font-size: 12px;
+      color: var(--grey);
+    }
+
+    .client-cell {
+      font-size: 14px;
+      color: var(--white);
+    }
+
+    .client-cell.grey { color: var(--grey); font-size: 13px; }
+
+    .client-status-pill {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 100px;
+    }
+
+    .cs-new { background: rgba(255,255,255,0.06); color: var(--grey); }
+    .cs-active { background: var(--green-bg); color: var(--green); }
+    .cs-due { background: var(--yellow-bg); color: var(--yellow); }
+    .cs-overdue { background: var(--red-bg); color: var(--red); }
+    .cs-lapsed { background: rgba(239,68,68,0.05); color: rgba(239,68,68,0.6); }
+
+    /* Loading */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 48px;
+      color: var(--grey);
+      font-size: 14px;
+    }
+
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.1);
+      border-top-color: var(--blue-bright);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Barber color map */
+    .bc-jay { background: #2979ff; }
+    .bc-abe { background: #a855f7; }
+    .bc-sheika { background: #f59e0b; }
+    .bc-ameer { background: #22c55e; }
+    .bc-default { background: var(--grey); }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .topbar { padding: 0 16px; }
+      .topbar-shop { display: none; }
+      .main { padding: 20px 16px 48px; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .appt-card { grid-template-columns: 70px 1fr; gap: 8px; }
+      .appt-barber, .appt-status { display: none; }
+      .client-table-head { display: none; }
+      .client-row { grid-template-columns: 1fr 80px; }
+      .client-row > *:nth-child(3),
+      .client-row > *:nth-child(4) { display: none; }
+      .page-title { font-size: 36px; }
+      .login-box { padding: 36px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">BarberIQ</div>
+    <div class="login-title">Owner<br>Dashboard</div>
+    <input type="password" class="login-input" id="pass-input" placeholder="Enter password" autocomplete="current-password">
+    <button class="login-btn" onclick="tryLogin()">Enter</button>
+    <div class="login-error" id="login-error">Wrong password. Try again.</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">Barber<span>IQ</span></div>
+      <div class="topbar-shop">NJ Barbershop · Clifton, NJ</div>
+    </div>
+    <div class="topbar-right">
+      <div class="live-badge"><div class="live-dot"></div> Live</div>
+      <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
+      <button class="logout-btn" onclick="logout()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="page-header">
+      <div class="page-date" id="today-label"></div>
+      <div class="page-title">Good Morning,<br>Abe ✂️</div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Today's Bookings</div>
+        <div class="stat-value blue" id="stat-today">—</div>
+        <div class="stat-sub">appointments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">This Month</div>
+        <div class="stat-value" id="stat-month">—</div>
+        <div class="stat-sub">total visits</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Clients</div>
+        <div class="stat-value green" id="stat-clients">—</div>
+        <div class="stat-sub">in system</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Due for Visit</div>
+        <div class="stat-value" id="stat-due" style="color:var(--yellow)">—</div>
+        <div class="stat-sub">clients overdue</div>
+      </div>
+    </div>
+
+    <!-- Today's Appointments -->
+    <div class="section-head">
+      <div class="section-title">Today's Appointments</div>
+      <div class="section-count" id="appt-count">Loading…</div>
+    </div>
+    <div id="appt-list" class="appt-grid">
+      <div class="loading"><div class="spinner"></div> Loading appointments…</div>
+    </div>
+
+    <!-- Client List -->
+    <div class="section-head">
+      <div class="section-title">All Clients</div>
+      <div class="section-count" id="client-count">Loading…</div>
+    </div>
+    <div class="client-table">
+      <div class="client-table-head">
+        <div class="th">Client</div>
+        <div class="th">Last Visit</div>
+        <div class="th">Visits</div>
+        <div class="th">Barber</div>
+        <div class="th">Status</div>
+      </div>
+      <div id="client-list">
+        <div class="loading"><div class="spinner"></div> Loading clients…</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const PASSWORD = 'niceday';
+  const SUPABASE_URL = 'https://rlrufmpknxbvhgjtnqpp.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscnVmbXBrbnhidmhnanRucXBwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MjU1NzEsImV4cCI6MjA5MjIwMTU3MX0.GXGHYQTYh7jUtSv6gHbTPmJuaZNu61wv77fZEXvxnSg';
+  const SHOP_ID = 'bf10ffa1-12dd-4f3b-ae4e-eb122ee66654';
+
+  // ── Auth ──────────────────────────────────────────────────
+  function tryLogin() {
+    const val = document.getElementById('pass-input').value;
+    if (val === PASSWORD) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      sessionStorage.setItem('biq_auth', '1');
+      init();
+    } else {
+      document.getElementById('login-error').style.display = 'block';
+      document.getElementById('pass-input').value = '';
+    }
+  }
+
+  function logout() {
+    sessionStorage.removeItem('biq_auth');
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+  }
+
+  document.getElementById('pass-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') tryLogin();
+  });
+
+  // Auto-login if session active
+  if (sessionStorage.getItem('biq_auth')) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    init();
+  }
+
+  // ── Supabase fetch ────────────────────────────────────────
+  async function supabase(path) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    if (!res.ok) throw new Error(`Supabase error: ${res.status}`);
+    return res.json();
+  }
+
+  // ── Helpers ───────────────────────────────────────────────
+  const barberColors = { Jay: 'bc-jay', Ibrahim: 'bc-abe', Hussein: 'bc-sheika', Ameer: 'bc-ameer' };
+  const barberDisplay = { Jay: 'Jay', Ibrahim: 'Abe', Hussein: 'Sheika', Ameer: 'Ameer' };
+
+  function fmtDate(d) {
+    if (!d) return '—';
+    const [y,m,day] = d.split('T')[0].split('-');
+    return new Date(+y, +m-1, +day).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  function todayStr() {
+    const now = new Date();
+    return now.toISOString().split('T')[0];
+  }
+
+  function greetingByHour() {
+    const h = new Date().getHours();
+    if (h < 12) return 'Good Morning';
+    if (h < 17) return 'Good Afternoon';
+    return 'Good Evening';
+  }
+
+  // ── Init ──────────────────────────────────────────────────
+  function init() {
+    // Date label
+    const now = new Date();
+    document.getElementById('today-label').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    document.querySelector('.page-title').innerHTML = `${greetingByHour()},<br>Abe ✂️`;
+    loadAll();
+  }
+
+  async function loadAll() {
+    await Promise.all([loadAppointments(), loadClients()]);
+  }
+
+  // ── Today's Appointments ──────────────────────────────────
+  async function loadAppointments() {
+    const today = todayStr();
+    const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+    try {
+      const visits = await supabase(
+        `visits?shop_id=eq.${SHOP_ID}&scheduled_at=gte.${today}T00:00:00&scheduled_at=lt.${tomorrowStr}T00:00:00&order=scheduled_at.asc&select=*,clients(name,phone),barbers(name)`
+      );
+
+      document.getElementById('stat-today').textContent = visits.length;
+      document.getElementById('appt-count').textContent = `${visits.length} today`;
+
+      if (visits.length === 0) {
+        document.getElementById('appt-list').innerHTML = `<div class="empty-state">No appointments scheduled for today.</div>`;
+        return;
+      }
+
+      document.getElementById('appt-list').innerHTML = visits.map(v => {
+        const clientName = v.clients?.name || 'Unknown';
+        const barberName = v.barbers?.name || '';
+        const displayBarber = barberDisplay[barberName] || barberName;
+        const colorClass = barberColors[barberName] || 'bc-default';
+
+        // Parse time from scheduled_at
+        const dt = new Date(v.scheduled_at);
+        const timeStr = dt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        const [time, period] = timeStr.split(' ');
+
+        const statusMap = {
+          booked: 'status-booked',
+          completed: 'status-completed',
+          noshow: 'status-noshow',
+          cancelled: 'status-cancelled'
+        };
+
+        return `
+          <div class="appt-card">
+            <div>
+              <div class="appt-time">${time}</div>
+              <div class="appt-time-period">${period}</div>
+            </div>
+            <div>
+              <div class="appt-client">${clientName}</div>
+              <div class="appt-service">${v.service || '—'}</div>
+            </div>
+            <div class="appt-barber">
+              <div class="barber-dot ${colorClass}"></div>
+              ${displayBarber}
+            </div>
+            <div class="appt-status">
+              <span class="status-pill ${statusMap[v.status] || 'status-booked'}">${v.status}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+    } catch (err) {
+      document.getElementById('appt-list').innerHTML = `<div class="empty-state">Could not load appointments. Check connection.</div>`;
+      console.error(err);
+    }
+  }
+
+  // ── Clients ───────────────────────────────────────────────
+  async function loadClients() {
+    try {
+      const [clients, allVisits] = await Promise.all([
+        supabase(`clients?shop_id=eq.${SHOP_ID}&order=created_at.desc&select=*,barbers(name)`),
+        supabase(`visits?shop_id=eq.${SHOP_ID}&select=*`)
+      ]);
+
+      // Stats
+      const today = todayStr();
+      const thisMonthStart = today.slice(0, 7) + '-01';
+      const monthVisits = allVisits.filter(v => v.scheduled_at >= thisMonthStart + 'T00:00:00');
+      const dueClients = clients.filter(c => c.status === 'due' || c.status === 'overdue' || c.status === 'lapsed');
+
+      document.getElementById('stat-month').textContent = monthVisits.length;
+      document.getElementById('stat-clients').textContent = clients.length;
+      document.getElementById('stat-due').textContent = dueClients.length;
+      document.getElementById('client-count').textContent = `${clients.length} total`;
+
+      if (clients.length === 0) {
+        document.getElementById('client-list').innerHTML = `<div class="empty-state" style="border:none;">No clients yet.</div>`;
+        return;
+      }
+
+      document.getElementById('client-list').innerHTML = clients.map(c => {
+        const barberName = c.barbers?.name || '';
+        const displayBarber = barberDisplay[barberName] || barberName || '—';
+        const statusClass = { new: 'cs-new', active: 'cs-active', due: 'cs-due', overdue: 'cs-overdue', lapsed: 'cs-lapsed' }[c.status] || 'cs-new';
+
+        return `
+          <div class="client-row">
+            <div>
+              <div class="client-name">${c.name}</div>
+              <div class="client-phone">${c.phone || '—'}</div>
+            </div>
+            <div class="client-cell grey">${fmtDate(c.last_visit_date)}</div>
+            <div class="client-cell">${c.visit_count || 0} visit${c.visit_count !== 1 ? 's' : ''}</div>
+            <div class="client-cell grey">${displayBarber}</div>
+            <div><span class="client-status-pill ${statusClass}">${c.status}</span></div>
+          </div>
+        `;
+      }).join('');
+
+    } catch (err) {
+      document.getElementById('client-list').innerHTML = `<div class="loading">Could not load clients.</div>`;
+      console.error(err);
+    }
+  }
+</script>
+</body>
+</html>
