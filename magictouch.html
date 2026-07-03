@@ -48,9 +48,10 @@
     }
 
     .nav-logo img {
-      height: 48px;
+      height: 56px;
       width: auto;
       object-fit: contain;
+      mix-blend-mode: screen;
     }
 
     .nav-cta {
@@ -75,14 +76,14 @@
       height: 100vh;
       min-height: 600px;
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       overflow: hidden;
     }
 
     .hero-bg {
       position: absolute;
       inset: 0;
-      background: url('interior_magictouch.png') center/cover no-repeat;
+      background: url('interior_magictouch.png') 30% center/140% no-repeat;
       transform: scale(1.04);
       transition: transform 8s ease;
     }
@@ -102,7 +103,7 @@
     .hero-content {
       position: relative;
       z-index: 2;
-      padding: 0 48px 80px;
+      padding: 0 48px;
       max-width: 640px;
     }
 
@@ -129,10 +130,11 @@
       margin-bottom: 24px;
     }
     .hero-logo-large img {
-      height: 140px;
+      height: 180px;
       width: auto;
       object-fit: contain;
-      filter: drop-shadow(0 4px 24px rgba(201,168,76,0.25));
+      mix-blend-mode: screen;
+      filter: drop-shadow(0 4px 32px rgba(201,168,76,0.3));
     }
 
     .hero-sub {
@@ -232,12 +234,20 @@
 
     .service-name {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 18px;
+      font-size: 22px;
       font-weight: 600;
+      font-style: italic;
       color: var(--cream);
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
     }
-    .service-price { font-size: 13px; color: var(--gold); font-weight: 500; }
+    .service-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      color: var(--gold);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+    }
 
     /* ── SECTION SHARED ───────────────────────────────────── */
     .section {
@@ -518,6 +528,13 @@
       grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
       gap: 8px;
       min-height: 48px;
+      align-items: start;
+    }
+    .slots-msg-wrap {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      min-height: 48px;
     }
     .slot {
       background: var(--card);
@@ -721,13 +738,38 @@
     /* ── RESPONSIVE ───────────────────────────────────────── */
     @media (max-width: 768px) {
       nav { padding: 0 20px; }
-      .nav-logo img { height: 38px; }
-      .hero-content { padding: 0 24px 64px; }
-      .hero-logo-large img { height: 100px; }
+      .nav-logo img { height: 44px; }
+      .hero-content { padding: 0 24px; }
+      .hero-logo-large img { height: 120px; }
       .services-strip { padding: 28px 24px; }
       .service-item { min-width: 130px; padding: 0 16px; }
       .section { padding: 72px 24px; }
-      .barber-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+      /* Mobile barber grid — circles like NJ Barbershop */
+      .barber-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+      }
+      .barber-card {
+        padding: 16px 8px 12px;
+        border: none;
+        background: transparent;
+      }
+      .barber-card.selected {
+        background: transparent;
+      }
+      .barber-card.selected .barber-photo {
+        border-color: var(--gold);
+        box-shadow: 0 0 0 3px rgba(201,168,76,0.25);
+      }
+      .barber-photo {
+        width: 68px;
+        height: 68px;
+        margin-bottom: 10px;
+      }
+      .barber-name { font-size: 15px; }
+      .barber-tag { display: none; }
+
       .form-grid { grid-template-columns: 1fr; }
       .form-grid .full { grid-column: 1; }
       .steps { display: none; }
@@ -881,7 +923,7 @@
       <div class="field">
         <div class="slots-label">Available Times</div>
         <div class="slots-grid" id="slots-grid">
-          <p class="slots-msg" id="slots-msg">Select a barber and date first</p>
+          <div class="slots-msg-wrap"><p class="slots-msg" id="slots-msg">Select a barber and date first</p></div>
         </div>
         <input type="hidden" id="selected-time" />
       </div>
@@ -932,9 +974,7 @@
             </svg>
           </div>
           <p class="consent-text">
-            <strong>I agree to receive text message confirmations and appointment reminders</strong>
-            from Magic Touch Barbershop at the phone number provided. Message frequency varies.
-            Message & data rates may apply. Reply STOP at any time to opt out.
+            <strong>I agree to receive appointment texts</strong> from Magic Touch Barbershop. Reply STOP to opt out.
           </p>
         </div>
         <input type="hidden" id="sms_consent" value="false" />
@@ -991,10 +1031,10 @@
   // Availability is fetched via /api/availability (serverless proxy)
 
   const BARBERS = [
-    { name: 'Jay',     tag: 'Fades & Lineups',  photo: 'jay_magictouch.JPG',     calendarId: '23c7b3b893fb1aac6cb2f3248586ee5044b2c7b936ca5314fb4de56f747e6a16@group.calendar.google.com' },
-    { name: 'Moe',     tag: 'Fades & Tapers',   photo: 'moe_magictouch.JPG',     calendarId: '65e2a2e4db95bcfe6c2aba4ef093edefc5a707843d6321b93794434415df151e@group.calendar.google.com' },
     { name: 'Hamada',  tag: 'Cuts & Beards',    photo: 'hamada_magictouch.JPG',  calendarId: '3fc1b67343babed9f26fc6888bbbd8e87b6ca4fa65bd07e74cd0244c798d634@group.calendar.google.com' },
     { name: 'Mahmoud', tag: 'Precision Cuts',   photo: 'mahmoud_magictouch.JPG', calendarId: '87519cdd037191891c34f415612149b23252a756567d9ad6a1cd1342f6984758@group.calendar.google.com' },
+    { name: 'Jay',     tag: 'Fades & Lineups',  photo: 'jay_magictouch.JPG',     calendarId: '23c7b3b893fb1aac6cb2f3248586ee5044b2c7b936ca5314fb4de56f747e6a16@group.calendar.google.com' },
+    { name: 'Moe',     tag: 'Fades & Tapers',   photo: 'moe_magictouch.JPG',     calendarId: '65e2a2e4db95bcfe6c2aba4ef093edefc5a707843d6321b93794434415df151e@group.calendar.google.com' },
   ];
 
   let selectedBarber = null;
@@ -1047,7 +1087,7 @@
 
   async function fetchSlots(calendarId, date) {
     const grid = document.getElementById('slots-grid');
-    grid.innerHTML = '<p class="slots-msg">Loading availability…</p>';
+    grid.innerHTML = '<div class="slots-msg-wrap"><p class="slots-msg">Loading availability…</p></div>';
     try {
       const res = await fetch('/api/availability', {
         method: 'POST',
@@ -1059,13 +1099,13 @@
       const slots = generateSlots(date, busy);
 
       if (!slots.length) {
-        grid.innerHTML = '<p class="slots-msg">No availability on this date. Please try another day.</p>';
+        grid.innerHTML = '<div class="slots-msg-wrap"><p class="slots-msg">No availability on this date. Please try another day.</p></div>';
         return;
       }
       grid.innerHTML = slots.map(t => `<div class="slot" onclick="selectSlot(this,'${t}')">${t}</div>`).join('');
       setStep(3);
     } catch {
-      grid.innerHTML = '<p class="slots-msg" style="color:var(--error)">Could not load availability. Please try again.</p>';
+      grid.innerHTML = '<div class="slots-msg-wrap"><p class="slots-msg" style="color:var(--error)">Could not load availability. Please try again.</p></div>';
     }
   }
 
