@@ -5,20 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Magic Touch Barbershop — Book Now</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
   <style>
     :root {
       --black:    #080808;
-      --surface:  #111111;
-      --card:     #161616;
-      --border:   #272727;
+      --surface:  #101010;
+      --card:     #151515;
+      --border:   #222222;
+      --border2:  #2e2e2e;
       --gold:     #C9A84C;
-      --gold-lt:  #E2C06A;
-      --gold-dim: #6B5520;
+      --gold-lt:  #DFB95A;
+      --gold-dim: #5C3D10;
       --cream:    #F0EAE0;
-      --muted:    #888880;
+      --muted:    #807870;
       --error:    #E05C5C;
-      --radius:   4px;
+      --radius:   3px;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,190 +31,202 @@
       font-size: 15px;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
     /* ── NAV ──────────────────────────────────────────────── */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
-      z-index: 100;
+      z-index: 200;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 32px;
+      padding: 0 48px;
       height: 68px;
-      background: rgba(8,8,8,0.88);
-      backdrop-filter: blur(14px);
+      background: rgba(8,8,8,0.92);
+      backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
     }
 
     .nav-logo img {
-      height: 56px;
+      height: 52px;
       width: auto;
       object-fit: contain;
       mix-blend-mode: screen;
     }
 
-    .nav-cta {
-      background: var(--gold);
-      color: var(--black);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
+    .nav-right { display: flex; align-items: center; gap: 32px; }
+
+    .nav-links { display: flex; gap: 28px; }
+    .nav-links a {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      padding: 9px 20px;
-      border: none;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--cream); }
+
+    .nav-cta {
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      background: transparent;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 9px 22px;
       border-radius: var(--radius);
       cursor: pointer;
       text-decoration: none;
-      transition: background 0.2s;
+      transition: all 0.2s;
     }
-    .nav-cta:hover { background: var(--gold-lt); }
+    .nav-cta:hover { background: var(--gold); color: var(--black); }
 
     /* ── HERO ─────────────────────────────────────────────── */
     .hero {
       position: relative;
       height: 100vh;
-      min-height: 600px;
+      min-height: 640px;
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      justify-content: flex-end;
       overflow: hidden;
     }
 
     .hero-bg {
       position: absolute;
       inset: 0;
-      background: url('interior_magictouch.png') 30% center/140% no-repeat;
-      transform: scale(1.04);
-      transition: transform 8s ease;
+      background: url('interior_magictouch.png') 35% center / 130% no-repeat;
+      transform: scale(1.03);
+      transition: transform 10s ease;
     }
     .hero:hover .hero-bg { transform: scale(1.0); }
 
+    /* Heavy bottom gradient — content readable, top shows shop */
     .hero-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(105deg,
-        rgba(8,8,8,0.95) 0%,
-        rgba(8,8,8,0.80) 45%,
-        rgba(201,168,76,0.10) 75%,
-        rgba(201,168,76,0.03) 100%
+      background: linear-gradient(
+        to bottom,
+        rgba(8,8,8,0.25) 0%,
+        rgba(8,8,8,0.20) 40%,
+        rgba(8,8,8,0.75) 70%,
+        rgba(8,8,8,0.97) 100%
       );
+    }
+
+    /* Gold vertical stripe — editorial accent */
+    .hero-stripe {
+      position: absolute;
+      top: 0; right: 88px; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, transparent, var(--gold-dim), transparent);
+      opacity: 0.6;
+      z-index: 1;
     }
 
     .hero-content {
       position: relative;
       z-index: 2;
-      padding: 0 48px;
-      max-width: 640px;
+      padding: 0 64px 80px;
+      max-width: 760px;
     }
 
     .hero-eyebrow {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 20px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 28px;
     }
     .hero-eyebrow::before {
       content: '';
       display: block;
-      width: 32px;
+      width: 36px;
       height: 1px;
       background: var(--gold);
     }
 
-    .hero-logo-large {
-      margin-bottom: 24px;
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(56px, 8vw, 110px);
+      font-weight: 900;
+      line-height: 0.92;
+      letter-spacing: -0.02em;
+      color: var(--cream);
+      margin-bottom: 28px;
     }
-    .hero-logo-large img {
-      height: 180px;
-      width: auto;
-      object-fit: contain;
-      mix-blend-mode: screen;
-      filter: drop-shadow(0 4px 32px rgba(201,168,76,0.3));
+    .hero-title em {
+      font-style: italic;
+      color: var(--gold);
+      display: block;
     }
 
     .hero-sub {
-      font-size: 16px;
+      font-size: 15px;
       color: var(--muted);
-      margin-bottom: 36px;
-      max-width: 400px;
-      line-height: 1.7;
+      max-width: 380px;
+      line-height: 1.8;
+      margin-bottom: 40px;
     }
 
-    .hero-actions {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
 
-    .hero-btn {
+    .btn-primary {
       display: inline-flex;
       align-items: center;
       gap: 10px;
       background: var(--gold);
       color: var(--black);
-      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
       font-weight: 600;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      padding: 14px 28px;
+      padding: 15px 32px;
       border-radius: var(--radius);
       text-decoration: none;
+      border: none;
+      cursor: pointer;
       transition: background 0.2s, transform 0.15s;
     }
-    .hero-btn:hover { background: var(--gold-lt); transform: translateY(-1px); }
-    .hero-btn svg { width: 16px; height: 16px; }
+    .btn-primary:hover { background: var(--gold-lt); transform: translateY(-1px); }
+    .btn-primary svg { width: 15px; height: 15px; }
 
-    .hero-btn-outline {
+    .btn-ghost {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       background: transparent;
-      color: var(--cream);
-      font-size: 13px;
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
       font-weight: 500;
-      letter-spacing: 0.06em;
-      padding: 14px 24px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 15px 24px;
       border-radius: var(--radius);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border2);
       text-decoration: none;
       transition: border-color 0.2s, color 0.2s;
     }
-    .hero-btn-outline:hover { border-color: var(--gold); color: var(--gold); }
-    .hero-btn-outline svg { width: 15px; height: 15px; }
-
-    .hero-scroll {
-      position: absolute;
-      bottom: 32px;
-      right: 48px;
-      font-size: 11px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--muted);
-      writing-mode: vertical-rl;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .hero-scroll::after {
-      content: '';
-      display: block;
-      width: 1px;
-      height: 48px;
-      background: var(--border);
-    }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+    .btn-ghost svg { width: 14px; height: 14px; }
 
     /* ── SERVICES STRIP ───────────────────────────────────── */
     .services-strip {
       background: var(--surface);
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
-      padding: 36px 48px;
       display: flex;
       overflow-x: auto;
       scrollbar-width: none;
@@ -222,149 +235,177 @@
 
     .service-item {
       flex: 1;
-      min-width: 150px;
+      min-width: 160px;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      padding: 0 24px;
+      padding: 32px 24px;
       border-right: 1px solid var(--border);
+      transition: background 0.2s;
     }
     .service-item:last-child { border-right: none; }
+    .service-item:hover { background: rgba(201,168,76,0.04); }
 
     .service-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 22px;
-      font-weight: 600;
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
       font-style: italic;
       color: var(--cream);
       margin-bottom: 6px;
-      letter-spacing: 0.02em;
     }
     .service-price {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
       color: var(--gold);
-      font-weight: 600;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
     }
 
     /* ── SECTION SHARED ───────────────────────────────────── */
     .section {
-      padding: 100px 48px;
-      max-width: 1100px;
+      padding: 104px 64px;
+      max-width: 1160px;
       margin: 0 auto;
     }
 
-    .section-label {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 14px;
+    .section-eyebrow {
       display: flex;
       align-items: center;
       gap: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 18px;
     }
-    .section-label::before {
+    .section-eyebrow::before {
       content: '';
       display: block;
-      width: 24px;
+      width: 28px;
       height: 1px;
       background: var(--gold);
     }
 
     .section-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(36px, 4vw, 52px);
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(38px, 4.5vw, 58px);
       font-weight: 700;
-      line-height: 1.05;
+      line-height: 1.02;
+      letter-spacing: -0.01em;
       color: var(--cream);
-      margin-bottom: 48px;
+      margin-bottom: 56px;
     }
+    .section-title em { font-style: italic; color: var(--gold); }
 
     /* ── REVIEWS ──────────────────────────────────────────── */
     #reviews { background: var(--black); }
 
-    .reviews-meta {
+    .reviews-top {
       display: flex;
-      align-items: center;
-      gap: 16px;
+      align-items: flex-end;
+      justify-content: space-between;
       margin-bottom: 48px;
       flex-wrap: wrap;
+      gap: 24px;
     }
+
+    .reviews-meta { display: flex; align-items: center; gap: 20px; }
+
     .reviews-score {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 56px;
-      font-weight: 700;
+      font-family: 'Playfair Display', serif;
+      font-size: 64px;
+      font-weight: 900;
       color: var(--gold);
       line-height: 1;
     }
-    .reviews-stars { font-size: 22px; color: var(--gold); letter-spacing: 2px; }
-    .reviews-count { font-size: 13px; color: var(--muted); }
+
+    .reviews-detail { display: flex; flex-direction: column; gap: 4px; }
+    .reviews-stars { font-size: 18px; color: var(--gold); letter-spacing: 3px; }
+    .reviews-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
 
     .reviews-link {
-      margin-left: auto;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
       font-weight: 500;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       color: var(--gold);
       text-decoration: none;
       border: 1px solid var(--gold-dim);
-      padding: 8px 16px;
+      padding: 10px 18px;
       border-radius: var(--radius);
       transition: background 0.2s;
     }
     .reviews-link:hover { background: rgba(201,168,76,0.08); }
-    .reviews-link svg { width: 11px; height: 11px; }
+    .reviews-link svg { width: 10px; height: 10px; }
 
     .reviews-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
     }
 
     .review-card {
       background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px;
+      padding: 36px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      transition: border-color 0.2s;
+      gap: 20px;
+      transition: background 0.2s;
     }
-    .review-card:hover { border-color: var(--gold-dim); }
-    .review-stars { color: var(--gold); font-size: 15px; letter-spacing: 2px; }
+    .review-card:hover { background: var(--card); }
+
+    .review-stars { color: var(--gold); font-size: 13px; letter-spacing: 3px; }
+
     .review-text {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 17px;
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
       font-style: italic;
-      color: var(--cream);
-      line-height: 1.65;
+      color: rgba(240,234,224,0.85);
+      line-height: 1.75;
       flex: 1;
     }
-    .review-author { display: flex; align-items: center; gap: 12px; margin-top: auto; }
+
+    .review-author { display: flex; align-items: center; gap: 14px; }
     .review-avatar {
-      width: 36px; height: 36px;
+      width: 38px; height: 38px;
       border-radius: 50%;
-      background: rgba(201,168,76,0.12);
+      background: rgba(201,168,76,0.1);
       border: 1px solid var(--gold-dim);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-size: 16px;
       font-weight: 700;
       color: var(--gold);
       flex-shrink: 0;
     }
-    .review-name { font-size: 13px; font-weight: 600; color: var(--cream); }
-    .review-date { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .review-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--cream);
+    }
+    .review-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
 
     /* ── BOOKING ──────────────────────────────────────────── */
     #booking {
@@ -373,58 +414,64 @@
       border-bottom: 1px solid var(--border);
     }
 
+    /* Steps */
     .steps {
       display: flex;
-      margin-bottom: 52px;
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
+      margin-bottom: 56px;
     }
     .step {
       flex: 1;
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 16px 20px;
+      gap: 14px;
+      padding: 18px 24px;
       background: var(--card);
       border-right: 1px solid var(--border);
       transition: background 0.2s;
     }
     .step:last-child { border-right: none; }
-    .step.active { background: rgba(201,168,76,0.08); }
+    .step.active { background: rgba(201,168,76,0.07); }
     .step-num {
       width: 28px; height: 28px;
       border-radius: 50%;
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 600;
+      border: 1px solid var(--border2);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
       color: var(--muted);
       flex-shrink: 0;
       transition: all 0.2s;
     }
     .step.active .step-num { border-color: var(--gold); background: var(--gold); color: var(--black); }
-    .step-text { font-size: 13px; font-weight: 500; color: var(--muted); transition: color 0.2s; }
+    .step-text {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
     .step.active .step-text { color: var(--cream); }
 
-    /* ── BARBER GRID ──────────────────────────────────────── */
+    /* Barbers */
     .barber-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
       margin-bottom: 48px;
     }
 
     .barber-card {
       background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px 16px 20px;
+      padding: 28px 20px 24px;
       text-align: center;
       cursor: pointer;
-      transition: border-color 0.2s, transform 0.15s;
+      transition: background 0.2s, transform 0.15s;
       position: relative;
       overflow: hidden;
     }
@@ -433,44 +480,48 @@
       position: absolute;
       top: 0; left: -100%;
       width: 60%; height: 100%;
-      background: linear-gradient(105deg, transparent, rgba(201,168,76,0.08), transparent);
+      background: linear-gradient(105deg, transparent, rgba(201,168,76,0.07), transparent);
       transition: left 0.5s ease;
     }
     .barber-card:hover::before { left: 150%; }
-    .barber-card:hover { border-color: var(--gold-dim); transform: translateY(-2px); }
-    .barber-card.selected { border-color: var(--gold); background: rgba(201,168,76,0.06); }
+    .barber-card:hover { background: #1a1a1a; }
+    .barber-card.selected { background: rgba(201,168,76,0.07); }
 
     .barber-photo {
-      width: 88px; height: 88px;
+      width: 92px; height: 92px;
       border-radius: 50%;
-      margin: 0 auto 14px;
-      border: 2px solid var(--border);
+      margin: 0 auto 16px;
+      border: 2px solid var(--border2);
       overflow: hidden;
       background: var(--surface);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       transition: border-color 0.2s;
     }
     .barber-card.selected .barber-photo { border-color: var(--gold); }
     .barber-photo img { width: 100%; height: 100%; object-fit: cover; }
     .barber-initial {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Playfair Display', serif;
       font-size: 32px;
       font-weight: 700;
       color: var(--gold);
     }
     .barber-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 20px;
-      font-weight: 600;
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
       color: var(--cream);
-      margin-bottom: 4px;
+      margin-bottom: 5px;
     }
-    .barber-tag { font-size: 11px; color: var(--muted); letter-spacing: 0.06em; }
+    .barber-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
     .barber-card.selected .barber-tag { color: var(--gold); }
 
-    /* ── FORM ─────────────────────────────────────────────── */
+    /* Form */
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -478,24 +529,25 @@
     }
     .form-grid .full { grid-column: 1 / -1; }
 
-    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field { display: flex; flex-direction: column; gap: 8px; }
 
     label {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--muted);
     }
 
     input, select {
       background: var(--card);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border2);
       border-radius: var(--radius);
       color: var(--cream);
       font-family: 'Inter', sans-serif;
       font-size: 15px;
-      padding: 13px 16px;
+      padding: 14px 16px;
       transition: border-color 0.2s;
       outline: none;
       width: 100%;
@@ -506,7 +558,7 @@
     input::placeholder { color: var(--muted); }
 
     select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888880' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23807870' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 16px center;
       padding-right: 44px;
@@ -514,35 +566,37 @@
     }
     select option { background: var(--card); }
 
-    /* ── TIME SLOTS ───────────────────────────────────────── */
+    /* Time slots */
     .slots-label {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--muted);
       margin-bottom: 8px;
     }
     .slots-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
       gap: 8px;
-      min-height: 48px;
+      min-height: 50px;
       align-items: start;
     }
     .slots-msg-wrap {
       grid-column: 1 / -1;
       display: flex;
       align-items: center;
-      min-height: 48px;
+      min-height: 50px;
     }
+    .slots-msg { font-size: 13px; color: var(--muted); }
+
     .slot {
       background: var(--card);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border2);
       border-radius: var(--radius);
       color: var(--cream);
-      font-size: 13px;
-      font-weight: 500;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
       padding: 10px 8px;
       text-align: center;
       cursor: pointer;
@@ -550,29 +604,30 @@
     }
     .slot:hover { border-color: var(--gold-dim); color: var(--gold); }
     .slot.selected { background: var(--gold); border-color: var(--gold); color: var(--black); font-weight: 600; }
-    .slots-msg { font-size: 13px; color: var(--muted); padding: 12px 0; }
 
-    /* ── CHANNEL TOGGLE ───────────────────────────────────── */
+    /* Channel toggle */
     .toggle-row { display: flex; gap: 10px; }
     .toggle-btn {
       flex: 1;
       padding: 12px;
       background: var(--card);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border2);
       border-radius: var(--radius);
       color: var(--muted);
-      font-size: 13px;
-      font-weight: 500;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       cursor: pointer;
       text-align: center;
       transition: all 0.15s;
     }
-    .toggle-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.07); }
+    .toggle-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.06); }
 
-    /* ── SMS CONSENT ──────────────────────────────────────── */
+    /* Consent */
     .consent-box {
       background: var(--card);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border2);
       border-radius: var(--radius);
       padding: 16px 18px;
       display: flex;
@@ -585,28 +640,22 @@
     .consent-box.checked { border-color: var(--gold); background: rgba(201,168,76,0.05); }
 
     .consent-checkbox {
-      width: 18px; height: 18px;
-      min-width: 18px;
-      border: 1px solid var(--border);
-      border-radius: 3px;
+      width: 18px; height: 18px; min-width: 18px;
+      border: 1px solid var(--border2);
+      border-radius: 2px;
       background: var(--surface);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       margin-top: 2px;
       transition: all 0.15s;
     }
-    .consent-box.checked .consent-checkbox {
-      background: var(--gold);
-      border-color: var(--gold);
-    }
+    .consent-box.checked .consent-checkbox { background: var(--gold); border-color: var(--gold); }
     .consent-checkbox svg { display: none; }
     .consent-box.checked .consent-checkbox svg { display: block; }
 
-    .consent-text { font-size: 12px; color: var(--muted); line-height: 1.6; }
+    .consent-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
     .consent-text strong { color: var(--cream); }
 
-    /* ── SUBMIT ───────────────────────────────────────────── */
+    /* Submit */
     .submit-btn {
       width: 100%;
       background: var(--gold);
@@ -614,23 +663,23 @@
       border: none;
       border-radius: var(--radius);
       font-family: 'Inter', sans-serif;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      padding: 17px;
+      padding: 18px;
       cursor: pointer;
       margin-top: 24px;
       transition: background 0.2s, transform 0.15s, opacity 0.2s;
     }
     .submit-btn:hover:not(:disabled) { background: var(--gold-lt); transform: translateY(-1px); }
-    .submit-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+    .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-    /* ── ERROR ────────────────────────────────────────────── */
+    /* Error */
     .form-error {
       display: none;
-      background: rgba(224,92,92,0.1);
-      border: 1px solid rgba(224,92,92,0.3);
+      background: rgba(224,92,92,0.08);
+      border: 1px solid rgba(224,92,92,0.25);
       border-radius: var(--radius);
       padding: 14px 16px;
       color: var(--error);
@@ -655,28 +704,28 @@
     .confirm-check {
       width: 72px; height: 72px;
       border-radius: 50%;
-      background: rgba(201,168,76,0.12);
+      background: rgba(201,168,76,0.1);
       border: 1px solid var(--gold);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       margin: 0 auto 32px;
     }
     .confirm-check svg { width: 32px; height: 32px; stroke: var(--gold); }
 
     .confirm-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 52px;
-      font-weight: 700;
+      font-family: 'Playfair Display', serif;
+      font-size: 56px;
+      font-weight: 900;
       color: var(--cream);
-      margin-bottom: 16px;
+      margin-bottom: 8px;
     }
+    .confirm-title em { font-style: italic; color: var(--gold); }
+
     .confirm-summary {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 28px 40px;
-      margin: 24px auto;
+      margin: 28px auto;
       max-width: 420px;
       text-align: left;
     }
@@ -689,23 +738,29 @@
       font-size: 14px;
     }
     .confirm-row:last-child { border-bottom: none; }
-    .confirm-row span:first-child { color: var(--muted); }
+    .confirm-row span:first-child { color: var(--muted); font-size: 12px; }
     .confirm-row span:last-child { color: var(--cream); font-weight: 500; }
-    .confirm-note { font-size: 13px; color: var(--muted); margin-top: 8px; }
-    .confirm-reschedule { margin-top: 16px; font-size: 12px; color: var(--muted); }
+    .confirm-note { font-size: 13px; color: var(--muted); }
+    .confirm-reschedule { margin-top: 12px; font-size: 12px; color: var(--muted); }
 
     /* ── FOOTER ───────────────────────────────────────────── */
     footer {
-      background: var(--surface);
+      background: #050505;
       border-top: 1px solid var(--border);
-      padding: 40px 48px;
+      padding: 48px 64px 32px;
+    }
+
+    .footer-top {
       display: grid;
       grid-template-columns: auto 1fr auto;
       align-items: center;
-      gap: 32px;
+      gap: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
     }
 
-    .footer-logo img { height: 44px; width: auto; object-fit: contain; }
+    .footer-logo img { height: 48px; width: auto; mix-blend-mode: screen; }
 
     .footer-info {
       display: flex;
@@ -713,14 +768,32 @@
       gap: 5px;
       text-align: center;
     }
-    .footer-detail { font-size: 12px; color: var(--muted); }
-    .footer-detail a {
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.2s;
+    .footer-detail {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: rgba(240,234,224,0.35);
+      letter-spacing: 0.06em;
     }
+    .footer-detail a { color: rgba(240,234,224,0.35); text-decoration: none; transition: color 0.2s; }
     .footer-detail a:hover { color: var(--gold); }
-    .footer-copy { font-size: 12px; color: var(--muted); text-align: right; }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-copy {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: rgba(240,234,224,0.2);
+      letter-spacing: 0.06em;
+    }
+    .footer-hours {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: rgba(240,234,224,0.2);
+      letter-spacing: 0.06em;
+    }
 
     /* ── SPINNER ──────────────────────────────────────────── */
     .spinner {
@@ -735,50 +808,51 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── RESPONSIVE ───────────────────────────────────────── */
+    /* ── MOBILE ───────────────────────────────────────────── */
     @media (max-width: 768px) {
-      nav { padding: 0 20px; }
+      nav { padding: 0 20px; height: 60px; }
       .nav-logo img { height: 44px; }
-      .hero-content { padding: 0 24px; }
-      .hero-logo-large img { height: 120px; }
-      .services-strip { padding: 28px 24px; }
-      .service-item { min-width: 130px; padding: 0 16px; }
-      .section { padding: 72px 24px; }
+      .nav-links { display: none; }
 
-      /* Mobile barber grid — circles like NJ Barbershop */
+      .hero-content { padding: 0 24px 56px; }
+      .hero-title { font-size: clamp(52px, 14vw, 80px); }
+      .hero-stripe { display: none; }
+      .hero-sub { font-size: 14px; }
+      .hero-actions { flex-direction: column; gap: 10px; }
+      .btn-primary, .btn-ghost { justify-content: center; width: 100%; }
+
+      .services-strip { padding: 0; }
+      .service-item { min-width: 140px; padding: 24px 16px; }
+
+      .section { padding: 72px 24px; }
+      .section-title { font-size: clamp(32px, 9vw, 46px); margin-bottom: 36px; }
+
+      /* Mobile barbers — 4 circles in a row */
       .barber-grid {
         grid-template-columns: repeat(4, 1fr);
-        gap: 8px;
+        gap: 0;
       }
-      .barber-card {
-        padding: 16px 8px 12px;
-        border: none;
-        background: transparent;
-      }
-      .barber-card.selected {
-        background: transparent;
-      }
-      .barber-card.selected .barber-photo {
-        border-color: var(--gold);
-        box-shadow: 0 0 0 3px rgba(201,168,76,0.25);
-      }
-      .barber-photo {
-        width: 68px;
-        height: 68px;
-        margin-bottom: 10px;
-      }
-      .barber-name { font-size: 15px; }
+      .barber-card { padding: 20px 8px 16px; }
+      .barber-photo { width: 62px; height: 62px; margin-bottom: 10px; }
+      .barber-name { font-size: 13px; }
       .barber-tag { display: none; }
 
       .form-grid { grid-template-columns: 1fr; }
       .form-grid .full { grid-column: 1; }
       .steps { display: none; }
+
       .reviews-grid { grid-template-columns: 1fr; }
-      .reviews-link { margin-left: 0; }
-      .reviews-meta { gap: 10px; }
-      footer { grid-template-columns: 1fr; text-align: center; }
-      .footer-copy { text-align: center; }
-      .hero-scroll { display: none; }
+      .reviews-top { flex-direction: column; align-items: flex-start; }
+
+      footer { padding: 36px 24px 24px; }
+      .footer-top { grid-template-columns: 1fr; text-align: center; gap: 20px; }
+      .footer-logo { display: flex; justify-content: center; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+    }
+
+    @media (max-width: 480px) {
+      .barber-photo { width: 56px; height: 56px; }
+      .barber-initial { font-size: 24px; }
     }
   </style>
 </head>
@@ -789,27 +863,36 @@
   <div class="nav-logo">
     <img src="logo_magictouch.png" alt="Magic Touch Barbershop" />
   </div>
-  <a class="nav-cta" href="#booking">Book Now</a>
+  <div class="nav-right">
+    <div class="nav-links">
+      <a href="#reviews">Reviews</a>
+      <a href="#booking">Book</a>
+    </div>
+    <a class="nav-cta" href="#booking">Book Now</a>
+  </div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
   <div class="hero-bg"></div>
   <div class="hero-overlay"></div>
+  <div class="hero-stripe"></div>
+
   <div class="hero-content">
-    <p class="hero-eyebrow">Clifton, New Jersey</p>
-    <div class="hero-logo-large">
-      <img src="logo_magictouch.png" alt="Magic Touch Barbershop" />
-    </div>
-    <p class="hero-sub">Precision cuts. Premium experience.<br>Book your appointment in under 60 seconds.</p>
+    <p class="hero-eyebrow">Est. 2020 · Clifton, New Jersey</p>
+    <h1 class="hero-title">
+      The cut
+      <em>you deserve.</em>
+    </h1>
+    <p class="hero-sub">Precision fades. Premium experience. Four master barbers — one address in Clifton.</p>
     <div class="hero-actions">
-      <a class="hero-btn" href="#booking">
+      <a class="btn-primary" href="#booking">
         Reserve Your Chair
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 8h10M9 4l4 4-4 4"/>
         </svg>
       </a>
-      <a class="hero-btn-outline"
+      <a class="btn-ghost"
          href="https://maps.google.com/?q=Magic+Touch+Barbershop+405+Piaget+Ave+Clifton+NJ+07011"
          target="_blank" rel="noopener">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -820,7 +903,6 @@
       </a>
     </div>
   </div>
-  <p class="hero-scroll">Scroll</p>
 </section>
 
 <!-- SERVICES STRIP -->
@@ -835,21 +917,28 @@
 <!-- REVIEWS -->
 <section id="reviews">
   <div class="section">
-    <p class="section-label">Google Reviews</p>
-    <h2 class="section-title">What People Say</h2>
-
-    <div class="reviews-meta">
-      <div class="reviews-score">4.8</div>
-      <div class="reviews-stars">★★★★★</div>
-      <div class="reviews-count">273 Google reviews</div>
-      <a class="reviews-link"
-         href="https://search.google.com/local/writereview?placeid=ChIJP-MTr5T-wokRTQpmTfLuLQo"
-         target="_blank" rel="noopener">
-        Leave a review
-        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-          <path d="M2 10L10 2M5 2h5v5"/>
-        </svg>
-      </a>
+    <div class="section-eyebrow">Google Reviews</div>
+    <div class="reviews-top">
+      <div>
+        <h2 class="section-title" style="margin-bottom:0">What people<br><em>are saying.</em></h2>
+      </div>
+      <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+        <div class="reviews-meta">
+          <div class="reviews-score">4.8</div>
+          <div class="reviews-detail">
+            <div class="reviews-stars">★★★★★</div>
+            <div class="reviews-count">273 Google reviews</div>
+          </div>
+        </div>
+        <a class="reviews-link"
+           href="https://search.google.com/local/writereview?placeid=ChIJP-MTr5T-wokRTQpmTfLuLQo"
+           target="_blank" rel="noopener">
+          Leave a review
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M2 10L10 2M5 2h5v5"/>
+          </svg>
+        </a>
+      </div>
     </div>
 
     <div class="reviews-grid">
@@ -882,7 +971,7 @@
 
       <div class="review-card">
         <div class="review-stars">★★★★★</div>
-        <p class="review-text">"Best barbershop in Clifton and the surrounding area. Friendly and great professional barbers. Clean, welcoming, expert craftsmanship. Highly recommend."</p>
+        <p class="review-text">"Best barbershop in Clifton and surrounding area. Friendly, professional barbers. Clean, welcoming. Highly recommend to anyone looking for expert craftsmanship."</p>
         <div class="review-author">
           <div class="review-avatar">M</div>
           <div><div class="review-name">Michael S.</div><div class="review-date">Google Review</div></div>
@@ -895,12 +984,12 @@
 <!-- BOOKING -->
 <section id="booking">
   <div class="section">
-    <p class="section-label">Online Booking</p>
-    <h2 class="section-title">Reserve Your Seat</h2>
+    <div class="section-eyebrow">Online Booking</div>
+    <h2 class="section-title">Reserve your<br><em>seat.</em></h2>
 
     <div class="steps">
       <div class="step active" id="step-ind-1">
-        <div class="step-num">1</div><div class="step-text">Choose barber</div>
+        <div class="step-num">1</div><div class="step-text">Choose your barber</div>
       </div>
       <div class="step" id="step-ind-2">
         <div class="step-num">2</div><div class="step-text">Pick date & time</div>
@@ -910,10 +999,8 @@
       </div>
     </div>
 
-    <!-- Barber picker -->
     <div class="barber-grid" id="barber-grid"></div>
 
-    <!-- Form -->
     <div class="form-grid">
       <div class="field">
         <label for="date">Date</label>
@@ -923,7 +1010,7 @@
       <div class="field">
         <div class="slots-label">Available Times</div>
         <div class="slots-grid" id="slots-grid">
-          <div class="slots-msg-wrap"><p class="slots-msg" id="slots-msg">Select a barber and date first</p></div>
+          <div class="slots-msg-wrap"><p class="slots-msg">Select a barber and date first</p></div>
         </div>
         <input type="hidden" id="selected-time" />
       </div>
@@ -964,7 +1051,6 @@
         <input type="hidden" id="preferred_channel" value="sms" />
       </div>
 
-      <!-- SMS CONSENT -->
       <div class="field full">
         <label>Text Message Consent</label>
         <div class="consent-box" id="consent-box" onclick="toggleConsent()">
@@ -993,7 +1079,7 @@
       <polyline points="6,16 13,23 26,9"/>
     </svg>
   </div>
-  <h2 class="confirm-title">You're Booked.</h2>
+  <h2 class="confirm-title">You're <em>booked.</em></h2>
   <div class="confirm-summary">
     <div class="confirm-row"><span>Barber</span><span id="c-barber">—</span></div>
     <div class="confirm-row"><span>Date</span><span id="c-date">—</span></div>
@@ -1006,35 +1092,35 @@
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-logo">
-    <img src="logo_magictouch.png" alt="Magic Touch Barbershop" />
-  </div>
-  <div class="footer-info">
-    <div class="footer-detail">
-      <a href="https://maps.google.com/?q=Magic+Touch+Barbershop+405+Piaget+Ave+Clifton+NJ+07011"
-         target="_blank" rel="noopener">
-        📍 405 Piaget Ave, Clifton, NJ 07011
-      </a>
+  <div class="footer-top">
+    <div class="footer-logo">
+      <img src="logo_magictouch.png" alt="Magic Touch Barbershop" />
     </div>
-    <div class="footer-detail">
-      <a href="tel:+18622494441">(862) 249-4441</a>
+    <div class="footer-info">
+      <div class="footer-detail">
+        <a href="https://maps.google.com/?q=Magic+Touch+Barbershop+405+Piaget+Ave+Clifton+NJ+07011" target="_blank" rel="noopener">
+          405 Piaget Ave, Clifton, NJ 07011
+        </a>
+      </div>
+      <div class="footer-detail"><a href="tel:+18622494441">(862) 249-4441</a></div>
     </div>
-    <div class="footer-detail">Mon–Sat 9AM–8PM &nbsp;·&nbsp; Sun 10AM–5PM</div>
+    <a class="btn-primary" href="#booking">Book Now</a>
   </div>
-  <div class="footer-copy">© 2026 Magic Touch Barbershop</div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 Magic Touch Barbershop</div>
+    <div class="footer-hours">Mon–Sat 9AM–8PM · Sun 10AM–5PM</div>
+  </div>
 </footer>
 
 <script>
   const SHOP_ID = '6e496ab8-a207-451c-9016-ecbc4b511052';
   const N8N_URL = 'REPLACE_WITH_N8N_WEBHOOK_URL';
-  // No API key here — it lives in Vercel environment variables
-  // Availability is fetched via /api/availability (serverless proxy)
 
   const BARBERS = [
-    { name: 'Hamada',  tag: 'Cuts & Beards',    photo: 'hamada_magictouch.JPG',  calendarId: '3fc1b67343babed9f26fc6888bbbd8e87b6ca4fa65bd07e74cd0244c798d634@group.calendar.google.com' },
-    { name: 'Mahmoud', tag: 'Precision Cuts',   photo: 'mahmoud_magictouch.JPG', calendarId: '87519cdd037191891c34f415612149b23252a756567d9ad6a1cd1342f6984758@group.calendar.google.com' },
-    { name: 'Jay',     tag: 'Fades & Lineups',  photo: 'jay_magictouch.JPG',     calendarId: '23c7b3b893fb1aac6cb2f3248586ee5044b2c7b936ca5314fb4de56f747e6a16@group.calendar.google.com' },
-    { name: 'Moe',     tag: 'Fades & Tapers',   photo: 'moe_magictouch.JPG',     calendarId: '65e2a2e4db95bcfe6c2aba4ef093edefc5a707843d6321b93794434415df151e@group.calendar.google.com' },
+    { name: 'Hamada',  tag: 'Cuts & Beards',   photo: 'hamada_magictouch.JPG',  calendarId: '3fc1b67343babed9f26fc6888bbbd8e87b6ca4fa65bd07e74cd0244c798d634@group.calendar.google.com' },
+    { name: 'Mahmoud', tag: 'Precision Cuts',  photo: 'mahmoud_magictouch.JPG', calendarId: '87519cdd037191891c34f415612149b23252a756567d9ad6a1cd1342f6984758@group.calendar.google.com' },
+    { name: 'Jay',     tag: 'Fades & Lineups', photo: 'jay_magictouch.JPG',     calendarId: '23c7b3b893fb1aac6cb2f3248586ee5044b2c7b936ca5314fb4de56f747e6a16@group.calendar.google.com' },
+    { name: 'Moe',     tag: 'Fades & Tapers',  photo: 'moe_magictouch.JPG',     calendarId: '65e2a2e4db95bcfe6c2aba4ef093edefc5a707843d6321b93794434415df151e@group.calendar.google.com' },
   ];
 
   let selectedBarber = null;
@@ -1099,13 +1185,13 @@
       const slots = generateSlots(date, busy);
 
       if (!slots.length) {
-        grid.innerHTML = '<div class="slots-msg-wrap"><p class="slots-msg">No availability on this date. Please try another day.</p></div>';
+        grid.innerHTML = '<div class="slots-msg-wrap"><p class="slots-msg">No availability on this date. Try another day.</p></div>';
         return;
       }
       grid.innerHTML = slots.map(t => `<div class="slot" onclick="selectSlot(this,'${t}')">${t}</div>`).join('');
       setStep(3);
     } catch {
-      grid.innerHTML = '<div class="slots-msg-wrap"><p class="slots-msg" style="color:var(--error)">Could not load availability. Please try again.</p></div>';
+      grid.innerHTML = '<div class="slots-msg-wrap"><p class="slots-msg" style="color:var(--error)">Could not load availability. Try again.</p></div>';
     }
   }
 
@@ -1124,7 +1210,7 @@
   }
 
   function formatTime(h, m) {
-    return `${h > 12 ? h - 12 : h === 0 ? 12 : h}:${m === 0 ? '00' : '30'} ${h < 12 ? 'AM' : 'PM'}`;
+    return `${h > 12 ? h-12 : h === 0 ? 12 : h}:${m === 0 ? '00' : '30'} ${h < 12 ? 'AM' : 'PM'}`;
   }
 
   function selectSlot(el, time) {
@@ -1144,7 +1230,6 @@
     consentGiven = !consentGiven;
     document.getElementById('sms_consent').value = consentGiven;
     document.getElementById('consent-box').classList.toggle('checked', consentGiven);
-    document.getElementById('consent-check').querySelector('svg').style.display = consentGiven ? 'block' : 'none';
   }
 
   function setStep(n) {
@@ -1161,23 +1246,21 @@
 
     hideError();
 
-    if (!selectedBarber)  return showError('Please choose a barber.');
-    if (!date)            return showError('Please select a date.');
-    if (!selectedTime)    return showError('Please select a time slot.');
-    if (!first)           return showError('Please enter your first name.');
-    if (!last)            return showError('Please enter your last name.');
-    if (!phone)           return showError('Please enter your phone number.');
-    if (!service)         return showError('Please select a service.');
-    if (!consentGiven)    return showError('Please agree to receive text message confirmations before booking.');
+    if (!selectedBarber) return showError('Please choose a barber.');
+    if (!date)           return showError('Please select a date.');
+    if (!selectedTime)   return showError('Please select a time slot.');
+    if (!first)          return showError('Please enter your first name.');
+    if (!last)           return showError('Please enter your last name.');
+    if (!phone)          return showError('Please enter your phone number.');
+    if (!service)        return showError('Please select a service.');
+    if (!consentGiven)   return showError('Please agree to receive appointment texts before booking.');
 
     const raw = phone.replace(/\D/g, '');
     const e164 = raw.startsWith('1') ? `+${raw}` : `+1${raw}`;
 
     const payload = {
       shop_id: SHOP_ID,
-      first_name: first,
-      last_name: last,
-      phone: e164,
+      first_name: first, last_name: last, phone: e164,
       preferred_barber: selectedBarber.name,
       date, time: selectedTime, service,
       preferred_channel: channel,
@@ -1198,10 +1281,7 @@
       if (res.ok) {
         showConfirmation(payload);
       } else {
-        const msg = res.status === 400
-          ? 'Something went wrong. Please check your details and try again.'
-          : 'Something went wrong on our end. Please try again in a moment.';
-        showError(msg);
+        showError(res.status === 400 ? 'Please check your details and try again.' : 'Something went wrong. Please try again.');
         btn.disabled = false;
         btn.innerHTML = 'Confirm Appointment';
       }
@@ -1215,7 +1295,6 @@
   function showConfirmation(p) {
     ['nav', '.hero', '.services-strip', '#reviews', '#booking', 'footer']
       .forEach(s => { const el = document.querySelector(s); if (el) el.style.display = 'none'; });
-
     const dateStr = new Date(p.date + 'T12:00:00').toLocaleDateString('en-US', {
       weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
     });
@@ -1224,7 +1303,6 @@
     document.getElementById('c-time').textContent    = p.time;
     document.getElementById('c-service').textContent = p.service;
     document.getElementById('c-phone-note').textContent = `Confirmation will be sent to ${p.phone}`;
-
     document.getElementById('confirmation').classList.add('visible');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
