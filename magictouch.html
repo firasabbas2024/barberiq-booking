@@ -50,7 +50,7 @@
     }
 
     .nav-logo img {
-      height: 52px;
+      height: 60px;
       width: auto;
       object-fit: contain;
       mix-blend-mode: screen;
@@ -101,7 +101,7 @@
     .hero-bg {
       position: absolute;
       inset: 0;
-      background: url('interior_magictouch.png') 35% center / 130% no-repeat;
+      background: url('interior_magictouch.png') 22% center / 165% no-repeat;
       transform: scale(1.03);
       transition: transform 10s ease;
     }
@@ -128,6 +128,23 @@
       background: linear-gradient(to bottom, transparent, var(--gold-dim), transparent);
       opacity: 0.6;
       z-index: 1;
+    }
+
+    /* Logo watermark — blended into the hero */
+    .hero-logo-watermark {
+      position: absolute;
+      top: 50%;
+      right: 6%;
+      transform: translateY(-50%);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .hero-logo-watermark img {
+      width: 260px;
+      height: auto;
+      mix-blend-mode: screen;
+      opacity: 0.18;
+      filter: brightness(1.4) saturate(0.8);
     }
 
     .hero-content {
@@ -811,12 +828,21 @@
     /* ── MOBILE ───────────────────────────────────────────── */
     @media (max-width: 768px) {
       nav { padding: 0 20px; height: 60px; }
-      .nav-logo img { height: 44px; }
+      .nav-logo img { height: 48px; }
       .nav-links { display: none; }
 
+      /* Critical fix — cover fills full mobile viewport height */
+      .hero-bg {
+        background-size: cover !important;
+        background-position: 45% center !important;
+        transform: none !important;
+      }
+      .hero:hover .hero-bg { transform: none !important; }
+
+      .hero-logo-watermark { display: none; }
+      .hero-stripe { display: none; }
       .hero-content { padding: 0 24px 56px; }
       .hero-title { font-size: clamp(52px, 14vw, 80px); }
-      .hero-stripe { display: none; }
       .hero-sub { font-size: 14px; }
       .hero-actions { flex-direction: column; gap: 10px; }
       .btn-primary, .btn-ghost { justify-content: center; width: 100%; }
@@ -877,6 +903,9 @@
   <div class="hero-bg"></div>
   <div class="hero-overlay"></div>
   <div class="hero-stripe"></div>
+  <div class="hero-logo-watermark">
+    <img src="logo_magictouch.png" alt="" />
+  </div>
 
   <div class="hero-content">
     <p class="hero-eyebrow">Est. 2020 · Clifton, New Jersey</p>
