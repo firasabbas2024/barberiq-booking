@@ -572,6 +572,7 @@
       appearance: none;
     }
     input:focus, select:focus { border-color: var(--gold); }
+    input[type="date"] { color-scheme: dark; }
     #phone-wrap:focus-within { border-color: var(--gold); }
     #phone-wrap input:focus { border-color: transparent; }
     input::placeholder { color: var(--muted); }
@@ -828,27 +829,11 @@
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ── MOBILE ───────────────────────────────────────────── */
+    /* Mobile select for time slots */
+    #slots-select { display: none; }
     @media (max-width: 768px) {
-      .slots-grid {
-        display: flex;
-        flex-direction: column;
-        max-height: 240px;
-        overflow-y: auto;
-        gap: 0;
-        border: 1px solid var(--border2);
-        border-radius: var(--radius);
-      }
-      .slot {
-        border: none;
-        border-bottom: 1px solid var(--border);
-        border-radius: 0;
-        padding: 14px 16px;
-        text-align: left;
-        font-size: 14px;
-      }
-      .slot:last-child { border-bottom: none; }
-      .slot.selected { background: var(--gold); color: var(--black); }
-      .slots-msg-wrap { padding: 14px 16px; }
+      .slots-grid { display: none !important; }
+      #slots-select { display: block; }
       nav { padding: 0 20px; height: 60px; }
       .nav-logo img { height: 48px; }
       .nav-links { display: none; }
@@ -1063,6 +1048,9 @@
         <div class="slots-grid" id="slots-grid">
           <div class="slots-msg-wrap"><p class="slots-msg">Select a barber and date first</p></div>
         </div>
+        <select id="slots-select" onchange="selectSlotFromSelect(this)">
+          <option value="">Select a time</option>
+        </select>
         <input type="hidden" id="selected-time" />
       </div>
 
@@ -1240,9 +1228,11 @@
 
       if (!slots.length) {
         grid.innerHTML = '<div class="slots-msg-wrap"><p class="slots-msg">No availability on this date. Try another day.</p></div>';
+        document.getElementById('slots-select').innerHTML = '<option value="">No availability — try another day</option>';
         return;
       }
       grid.innerHTML = slots.map(t => `<div class="slot" onclick="selectSlot(this,'${t}')">${t}</div>`).join('');
+      document.getElementById('slots-select').innerHTML = '<option value="">Select a time</option>' + slots.map(t => `<option value="${t}">${t}</option>`).join('');
       setStep(3);
     } catch {
       grid.innerHTML = '<div class="slots-msg-wrap"><p class="slots-msg" style="color:var(--error)">Could not load availability. Try again.</p></div>';
@@ -1272,6 +1262,11 @@
     el.classList.add('selected');
     selectedTime = time;
     document.getElementById('selected-time').value = time;
+  }
+
+  function selectSlotFromSelect(sel) {
+    selectedTime = sel.value;
+    document.getElementById('selected-time').value = sel.value;
   }
 
   function setChannel(val) {
