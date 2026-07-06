@@ -1304,6 +1304,33 @@
     if (!service)        return showError('Please select a service.');
     if (!consentGiven)   return showError('Please agree to receive appointment texts before booking.');
 
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Checking availability…';
+
+    // Re-validate the slot is still free before submitting
+    try {
+      const checkRes = await fetch('/api/availability', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ calendarId: selectedBarber.calendarId, date })
+      });
+      const checkData = await checkRes.json();
+      const stillAvailable = generateSlots(date, checkData.busy || []).includes(selectedTime);
+      if (!stillAvailable) {
+        showError('Sorry, that time slot was just booked. Please select another time.');
+        btn.disabled = false;
+        btn.innerHTML = 'Confirm Appointment';
+        // Refresh the slots display
+        fetchSlots(selectedBarber.calendarId, date);
+        return;
+      }
+    } catch {
+      // If the check fails, proceed anyway rather than blocking the user
+    }
+
+    btn.innerHTML = '<span class="spinner"></span>Confirming…';
+
     const raw = phone.replace(/\D/g, '');
     const e164 = raw.startsWith('1') ? `+${raw}` : `+1${raw}`;
 
@@ -1315,10 +1342,6 @@
       preferred_channel: channel,
       sms_consent: true
     };
-
-    const btn = document.getElementById('submit-btn');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>Confirming…';
 
     try {
       const res = await fetch(N8N_URL, {
