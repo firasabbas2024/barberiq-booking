@@ -1193,7 +1193,12 @@
     selectedBarber = BARBERS[i];
     document.querySelectorAll('.barber-card').forEach((c, j) => c.classList.toggle('selected', j === i));
     setStep(2);
+    clearInterval(slotRefreshTimer);
     triggerSlotFetch();
+    const date = document.getElementById('date').value;
+    if (date) {
+      slotRefreshTimer = setInterval(() => triggerSlotFetchSilent(), 30000);
+    }
   }
 
   function setDateConstraints() {
@@ -1202,15 +1207,49 @@
     d.max = new Date(Date.now() + 60*24*60*60*1000).toISOString().split('T')[0];
   }
 
+  let slotRefreshTimer = null;
+
   function onDateChange() {
     selectedTime = null;
     document.getElementById('selected-time').value = '';
+    clearInterval(slotRefreshTimer);
     triggerSlotFetch();
+    slotRefreshTimer = setInterval(() => {
+      if (selectedBarber && document.getElementById('date').value) {
+        triggerSlotFetchSilent();
+      }
+    }, 30000);
   }
 
   function triggerSlotFetch() {
     const date = document.getElementById('date').value;
     if (selectedBarber && date) fetchSlots(selectedBarber.calendarId, date);
+  }
+
+  async function triggerSlotFetchSilent() {
+    const date = document.getElementById('date').value;
+    if (!selectedBarber || !date) return;
+    try {
+      const res = await fetch('/api/availability', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ calendarId: selectedBarber.calendarId, date })
+      });
+      const data = await res.json();
+      const slots = generateSlots(date, data.busy || []);
+      // Update grid without showing loading message
+      document.getElementById('slots-grid').innerHTML = slots.length
+        ? slots.map(t => `<div class="slot${selectedTime === t ? ' selected' : ''}" onclick="selectSlot(this,'${t}')">${t}</div>`).join('')
+        : '<div class="slots-msg-wrap"><p class="slots-msg">No availability on this date. Try another day.</p></div>';
+      document.getElementById('slots-select').innerHTML = '<option value="">Select a time</option>' + slots.map(t => `<option value="${t}"${selectedTime === t ? ' selected' : ''}>${t}</option>`).join('');
+      // If the selected slot got booked, clear it
+      if (selectedTime && !slots.includes(selectedTime)) {
+        selectedTime = null;
+        document.getElementById('selected-time').value = '';
+        document.getElementById('slots-select').value = '';
+        showError('Your selected time was just booked. Please choose another slot.');
+      }
+    } catch { /* silent fail */ }
   }
 
   async function fetchSlots(calendarId, date) {
