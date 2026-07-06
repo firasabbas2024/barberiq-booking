@@ -38,7 +38,11 @@ export default async function handler(req, res) {
       `https://www.googleapis.com/calendar/v3/freeBusy?key=${apiKey}`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          // API key is referrer-restricted; server-side calls need to identify as the site
+          'Referer': 'https://barberiq-booking.vercel.app/'
+        },
         body: JSON.stringify({
           timeMin,
           timeMax,

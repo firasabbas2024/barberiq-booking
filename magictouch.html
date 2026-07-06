@@ -752,14 +752,15 @@
     .confirm-row {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: baseline;
+      gap: 24px;
       padding: 10px 0;
       border-bottom: 1px solid var(--border);
       font-size: 14px;
     }
     .confirm-row:last-child { border-bottom: none; }
-    .confirm-row span:first-child { color: var(--muted); font-size: 12px; }
-    .confirm-row span:last-child { color: var(--cream); font-weight: 500; }
+    .confirm-row span:first-child { color: var(--muted); font-size: 12px; flex-shrink: 0; }
+    .confirm-row span:last-child { color: var(--cream); font-weight: 500; text-align: right; }
     .confirm-note { font-size: 13px; color: var(--muted); }
     .confirm-reschedule { margin-top: 12px; font-size: 12px; color: var(--muted); }
 
@@ -1236,7 +1237,8 @@
         body: JSON.stringify({ calendarId: selectedBarber.calendarId, date })
       });
       const data = await res.json();
-      const slots = generateSlots(date, data.busy || []);
+      if (!res.ok || !Array.isArray(data.busy)) return; // keep current slots on error
+      const slots = generateSlots(date, data.busy);
       // Update grid without showing loading message
       document.getElementById('slots-grid').innerHTML = slots.length
         ? slots.map(t => `<div class="slot${selectedTime === t ? ' selected' : ''}" onclick="selectSlot(this,'${t}')">${t}</div>`).join('')
@@ -1262,8 +1264,8 @@
         body: JSON.stringify({ calendarId, date })
       });
       const data = await res.json();
-      const busy = data.busy || [];
-      const slots = generateSlots(date, busy);
+      if (!res.ok || !Array.isArray(data.busy)) throw new Error('availability failed');
+      const slots = generateSlots(date, data.busy);
 
       if (!slots.length) {
         grid.innerHTML = '<div class="slots-msg-wrap"><p class="slots-msg">No availability on this date. Try another day.</p></div>';
@@ -1355,7 +1357,8 @@
         body: JSON.stringify({ calendarId: selectedBarber.calendarId, date })
       });
       const checkData = await checkRes.json();
-      const stillAvailable = generateSlots(date, checkData.busy || []).includes(selectedTime);
+      if (!checkRes.ok || !Array.isArray(checkData.busy)) throw new Error('check failed');
+      const stillAvailable = generateSlots(date, checkData.busy).includes(selectedTime);
       if (!stillAvailable) {
         showError('Sorry, that time slot was just booked. Please select another time.');
         btn.disabled = false;
