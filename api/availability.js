@@ -57,9 +57,15 @@ export default async function handler(req, res) {
     }
 
     const data = await googleRes.json();
-    const busy = data.calendars?.[calendarId]?.busy || [];
+    const cal = data.calendars?.[calendarId];
 
-    return res.status(200).json({ busy });
+    // Google returns 200 with a per-calendar error (e.g. notFound) when the
+    // calendar isn't public — treat that as an error, never as "all free"
+    if (!cal || (cal.errors && cal.errors.length)) {
+      return res.status(502).json({ error: 'Calendar not accessible', details: cal?.errors || 'missing' });
+    }
+
+    return res.status(200).json({ busy: cal.busy || [] });
 
   } catch (error) {
     return res.status(500).json({ error: 'Failed to fetch availability' });
